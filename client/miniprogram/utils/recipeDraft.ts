@@ -58,19 +58,24 @@ export function parseRecipeJson(raw: string): ParseResult {
     return { data: null, error: '还没有粘贴 AI 返回的内容' }
   }
 
+  // 从聊天窗口复制时常带 HTML 实体、行尾反斜杠续行，先清一遍再解析
+  const prepared = sanitize(text)
   let parsed: unknown
   try {
-    parsed = JSON.parse(stripFence(text))
+    parsed = JSON.parse(stripFence(prepared))
   } catch {
-    const start = text.indexOf('{')
-    const end = text.lastIndexOf('}')
+    const start = prepared.indexOf('{')
+    const end = prepared.lastIndexOf('}')
     if (start < 0 || end <= start) {
       return { data: null, error: '没有找到 JSON，请把 AI 返回的完整内容粘贴进来' }
     }
     try {
-      parsed = JSON.parse(text.slice(start, end + 1))
+      parsed = JSON.parse(prepared.slice(start, end + 1))
     } catch {
-      return { data: null, error: 'JSON 格式不完整，可能被截断了，请让 AI 重新输出一次' }
+      return {
+        data: null,
+        error: 'JSON 格式不完整，可能被截断或带上了转义字符；可以让 AI 用 ```json 代码块重新输出一次',
+      }
     }
   }
 
@@ -127,6 +132,32 @@ function stripFence(text: string): string {
     .replace(/^```(?:json)?\s*/i, '')
     .replace(/```\s*$/, '')
     .trim()
+}
+
+/**
+ * 兼容各种复制来源：BOM/零宽字符、HTML 实体（&#x20; 等）、行尾反斜杠续行。
+ * 只做“明显不是 JSON 语法”的清理，不动字符串内部的合法转义。
+ */
+function sanitize(raw: string): string {
+  return decodeEntities(raw.replace(/^\uFEFF/, '').replace(/[\u200b-\u200d\ufeff]/gi, ''))
+    .replace(/\\[ \t]*\r?\n/g, '\n')
+    .trim()
+}
+
+function decodeEntities(input: string): string {
+  return input
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;|&apos;/gi, "'")
+    .replace(/&lt;/gi, '<')
+    .replace(/&gt;/gi, '>')
+    .replace(/&amp;/gi, '&')
+    .replace(/&#x([0-9a-f]+);/gi, (_, code: string) => safeChar(parseInt(code, 16)))
+    .replace(/&#(\d+);/g, (_, code: string) => safeChar(Number(code)))
+}
+
+function safeChar(code: number): string {
+  return Number.isFinite(code) && code > 0 && code <= 0x10ffff ? String.fromCodePoint(code) : ''
 }
 
 function normalizeIngredients(raw: unknown): DraftIngredient[] {
