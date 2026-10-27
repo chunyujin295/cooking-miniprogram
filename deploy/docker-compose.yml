@@ -10,6 +10,11 @@ services:
     depends_on:
       - postgres
       - minio
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   postgres:
     image: postgres:16-alpine
@@ -22,6 +27,11 @@ services:
       - pgdata:/var/lib/postgresql/data
     ports:
       - "127.0.0.1:5433:5432"
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   minio:
     image: minio/minio:latest
@@ -35,6 +45,11 @@ services:
     ports:
       - "127.0.0.1:9100:9000"
       - "127.0.0.1:9101:9001"
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
 
 volumes:
   pgdata:

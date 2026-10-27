@@ -93,7 +93,7 @@ docker compose run --rm --no-deps api npx prisma migrate deploy
 
 **开机自启已配置**：`docker.service`、`nginx.service`、`frpClient.service` 都是 `enabled`，三个容器 `restart: always`，frpc 带 `Restart=always` 与 `network-online.target` 依赖，停电重启后无需人工介入。自检命令见 [docs/开发进度与接口.md](docs/开发进度与接口.md) 的「自启动」一节。
 
-**待办**：`deploy/scripts/backup.sh` 还没有挂进 cron，目前没有自动备份；清理构建缓存与日志轮转的建议也记在同一份文档的「服务端配置与运维」。
+**备份与日志**：`deploy/scripts/backup.sh` 已挂进 `yj` 的 crontab，每天 03:10 备份数据库到 `/home/yj/backup/cooking/`（保留 7 天）；api / postgres / minio 已配置 `json-file` 日志轮转（10MB × 3）。恢复命令与磁盘清理方式见同一份文档的「服务端配置与运维」。
 
 SSH 入口 `yj@codis.fun -P 6000` 由 VPS 的 ufw 按来源 IP 白名单放行，家庭宽带 IP 变化会连接超时，需要补规则。
 
