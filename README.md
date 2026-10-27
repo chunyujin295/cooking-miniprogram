@@ -1,6 +1,7 @@
 <p align="center">
   <img src="./logo/logo.jpg" alt="icon" width="200">
 </p>
+
 # 烹饪之王（cooking-miniprogram）
 
 组织化的烹饪管理，营造您自己的点餐—烹饪—出餐平台：菜谱管理 → 按餐次点菜 → 汇总确认 → 制作出餐 → 统计与采购清单。
