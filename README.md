@@ -76,10 +76,11 @@ npm run start:dev
 ## 部署形态
 
 ```
-小程序 → https://codis.fun (VPS nginx :443)
-        → frps 5003 → frp 隧道 → 家庭主机 cooking-api :3000
-                                  ├─ postgres :5433
-                                  └─ minio    :9100
+小程序 → https://codis.fun:443（公网 VPS：nginx + frps）
+        → frp 隧道 → 家庭主机 nginx :5006
+        → cooking-api（容器 3000，映射 127.0.0.1:5011）
+           ├─ postgres :5433
+           └─ minio    :9100
 ```
 
 服务器上：
@@ -90,7 +91,11 @@ docker compose build api && docker compose up -d api
 docker compose run --rm --no-deps api npx prisma migrate deploy
 ```
 
-SSH 入口 `yj@codis.fun -P 6000` 由 VPS 的 ufw 按来源 IP 白名单放行，家庭宽带 IP 变化会连接超时，需要补规则。排查与命令见 [docs/开发进度与接口.md](docs/开发进度与接口.md) 的「常用命令」一节。
+**开机自启已配置**：`docker.service`、`nginx.service`、`frpClient.service` 都是 `enabled`，三个容器 `restart: always`，frpc 带 `Restart=always` 与 `network-online.target` 依赖，停电重启后无需人工介入。自检命令见 [docs/开发进度与接口.md](docs/开发进度与接口.md) 的「自启动」一节。
+
+**待办**：`deploy/scripts/backup.sh` 还没有挂进 cron，目前没有自动备份；清理构建缓存与日志轮转的建议也记在同一份文档的「服务端配置与运维」。
+
+SSH 入口 `yj@codis.fun -P 6000` 由 VPS 的 ufw 按来源 IP 白名单放行，家庭宽带 IP 变化会连接超时，需要补规则。
 
 ## 菜谱整理（不内置大模型）
 
@@ -111,8 +116,8 @@ SSH 入口 `yj@codis.fun -P 6000` 由 VPS 的 ufw 按来源 IP 白名单放行�
 
 ## 文档
 
-- [开发进度与接口](docs/开发进度与接口.md)：接口清单、页面清单、部署与排障
-- [家庭餐桌-PRD与原型](docs/家庭餐桌-PRD与原型.html)：需求与交互原型
+- [开发进度与接口](docs/开发进度与接口.md)：接口清单、页面清单、部署与排障、服务端运维与自启动、小程序创建与上线记录
+- [烹饪之王-PRD与原型](docs/烹饪之王-PRD与原型.html)：需求与交互原型
 
 ## 许可
 
