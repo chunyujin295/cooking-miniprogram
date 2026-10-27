@@ -1,6 +1,6 @@
 <view class="login">
   <view class="brand">烹饪之王</view>
-  <view class="slogan">三个人，一顿饭，不用再问「吃什么」</view>
+  <view class="slogan">点餐 · 烹饪 · 出餐，营造您自己的厨房秩序</view>
 
   <button class="btn-primary login-btn" bindtap="onLogin" loading="{{loading}}" disabled="{{loading}}">
     微信一键登录

@@ -1,6 +1,6 @@
 <view class="page">
   <view class="page-title">加入家庭</view>
-  <view class="muted">一个家庭只有三个人，建好后把邀请码发给家人即可。</view>
+  <view class="muted">建好后把邀请码发给要一起做饭的人即可。</view>
 
   <view class="seg">
     <view class="seg-item {{mode === 'create' ? 'on' : ''}}" data-mode="create" bindtap="onModeChange">创建家庭</view>
