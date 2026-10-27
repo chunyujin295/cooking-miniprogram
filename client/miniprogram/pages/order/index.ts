@@ -105,17 +105,20 @@ Page({
     const nav = wx.getStorageSync('orderNav') as
       | { date?: string; mealType?: MealType }
       | ''
+    let forceReload = false
     if (nav && nav.date) {
       wx.removeStorageSync('orderNav')
       this.setData({
         date: nav.date,
         mealType: nav.mealType ?? this.data.mealType,
       })
+      forceReload = true
     }
-    void this.bootstrap()
+    // 从菜谱详情返回时不清空尚未提交的选择
+    void this.bootstrap(!forceReload)
   },
 
-  async bootstrap() {
+  async bootstrap(preserveLocal = false) {
     this.setData({ loading: true, error: '' })
     try {
       const [sessions, tags, dishes] = await Promise.all([
@@ -132,6 +135,10 @@ Page({
         })),
         recipes: dishes,
       })
+      if (preserveLocal && this.data.dirty && this.data.sessionId) {
+        this.setData({ loading: false })
+        return
+      }
       await this.selectType(this.data.mealType)
     } catch (err) {
       this.setData({ loading: false, error: err instanceof Error ? err.message : '加载失败' })
@@ -358,6 +365,12 @@ Page({
       },
       () => this.refreshDirty(),
     )
+  },
+
+  /** 点缩略图看做法；用 catchtap 的 +/- 不会触发这里 */
+  onOpenRecipe(e: WechatMiniprogram.TouchEvent) {
+    const id = e.currentTarget.dataset.id as string
+    wx.navigateTo({ url: `/pages/recipe/detail/index?id=${id}` })
   },
 
   onDishAdd(e: WechatMiniprogram.TouchEvent) {

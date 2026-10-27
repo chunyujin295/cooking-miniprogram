@@ -225,6 +225,17 @@
   font-size: 20rpx;
 }
 
+.cover-hint {
+  position: absolute;
+  left: 8rpx;
+  bottom: 8rpx;
+  padding: 2rpx 12rpx;
+  border-radius: var(--radius-pill);
+  background: rgba(0, 0, 0, 0.45);
+  color: #ffffff;
+  font-size: 20rpx;
+}
+
 .grid-overlay {
   position: absolute;
   right: 8rpx;
