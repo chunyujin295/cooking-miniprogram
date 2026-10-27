@@ -18,10 +18,12 @@ import type { Response } from 'express'
 import { CurrentUser, type AuthUser } from '../../common/decorators/current-user.decorator'
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard'
 import { STORAGE_ADAPTER, type StorageAdapter } from '../../infra/storage/storage.adapter'
-import { MediaService } from './media.service'
+import { MediaService, COVER_WIDTH, DETAIL_WIDTH } from './media.service'
 
 const MAX_IMAGE_BYTES = 10 * 1024 * 1024
 const ALLOWED_MIME = ['image/jpeg', 'image/png', 'image/webp']
+/** 只接受预设宽度，避免任意尺寸触发无意义的转码 */
+const THUMB_WIDTHS = new Set([COVER_WIDTH, DETAIL_WIDTH])
 
 @Controller('media')
 export class MediaController {
@@ -56,19 +58,27 @@ export class MediaController {
     @Query('key') key?: string,
     @Query('exp') exp?: string,
     @Query('sig') sig?: string,
+    @Query('w') w?: string,
     @Res({ passthrough: true }) res?: Response,
   ): Promise<StreamableFile> {
     if (!key || !exp || !sig) {
       throw new BadRequestException('缺少签名参数')
     }
-    if (!this.storage.verifyGetUrl(key, Number(exp), sig)) {
+    const width = w ? Number(w) : undefined
+    if (width !== undefined && !THUMB_WIDTHS.has(width)) {
+      throw new BadRequestException('不支持的图片尺寸')
+    }
+    if (!this.storage.verifyGetUrl(key, Number(exp), sig, width)) {
       throw new ForbiddenException('图片链接已失效')
     }
 
-    const object = await this.storage.getObject(key)
+    const object = width
+      ? await this.mediaService.getThumbnail(key, width)
+      : await this.storage.getObject(key)
     res?.setHeader('Content-Type', object.contentType)
     res?.setHeader('Content-Length', String(object.size))
-    res?.setHeader('Cache-Control', 'private, max-age=86400')
+    // key 带 uuid，内容不会变，长缓存；缩略图同样可长缓存
+    res?.setHeader('Cache-Control', 'private, max-age=604800')
     return new StreamableFile(object.stream)
   }
 }

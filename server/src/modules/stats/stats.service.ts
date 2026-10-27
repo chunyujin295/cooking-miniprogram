@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { PrismaService } from '../../infra/database/prisma.service'
-import { MediaService } from '../media/media.service'
+import { COVER_WIDTH, MediaService } from '../media/media.service'
 
 const MEAL_LABEL: Record<string, string> = {
   breakfast: '早餐',
@@ -208,7 +208,7 @@ export class StatsService {
         id: recipe.id,
         name: recipe.name,
         coverUrl: recipe.imageUrls[0]
-          ? this.mediaService.signUrls([recipe.imageUrls[0]])[0]
+          ? this.mediaService.signUrls([recipe.imageUrls[0]], COVER_WIDTH)[0]
           : null,
         totalMinutes: recipe.prepMinutes + recipe.cookMinutes,
       })

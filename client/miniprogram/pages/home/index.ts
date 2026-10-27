@@ -9,6 +9,7 @@ import {
   type MealSessionView,
 } from '../../services/meal'
 import { session } from '../../store/session'
+import { freshness } from '../../store/freshness'
 import { toDateKey } from '../../utils/date'
 
 interface MemberItem {
@@ -41,7 +42,19 @@ Page({
       wx.reLaunch({ url: '/pages/auth/login/index' })
       return
     }
+    // tab 切换会反复触发 onShow，短时间内复用上次结果，避免来回刷新
+    if (!freshness.stale('home')) {
+      return
+    }
+    await this.load()
+  },
 
+  async onPullDownRefresh() {
+    await this.load()
+    wx.stopPullDownRefresh()
+  },
+
+  async load() {
     this.setData({ loading: true, error: '' })
     try {
       const [view, sessions, profile, unread] = await Promise.all([
@@ -68,6 +81,7 @@ Page({
         })),
         loading: false,
       })
+      freshness.touch('home')
     } catch (err) {
       this.setData({ loading: false })
       if (err instanceof ApiError && err.code === 404) {

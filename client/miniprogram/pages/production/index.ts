@@ -9,6 +9,7 @@ import {
   type TaskItemView,
 } from '../../services/production'
 import { session } from '../../store/session'
+import { freshness } from '../../store/freshness'
 
 interface ItemRow extends TaskItemView {
   sourceText: string
@@ -36,6 +37,9 @@ Page({
       wx.reLaunch({ url: '/pages/auth/login/index' })
       return
     }
+    if (!freshness.stale('production')) {
+      return
+    }
     void this.load()
   },
 
@@ -49,6 +53,7 @@ Page({
     try {
       const tasks = await listProductionTasks(this.data.scope)
       this.setData({ tasks: tasks.map(toRow), loading: false })
+      freshness.touch('production')
     } catch (err) {
       this.setData({ loading: false, error: err instanceof Error ? err.message : '加载失败' })
     }
@@ -97,6 +102,8 @@ Page({
     this.setData({ busyId: id, error: '' })
     try {
       await action()
+      // 接单/出餐会改变首页与统计的汇总
+      freshness.invalidate('home', 'stats')
       wx.showToast({ title: toast, icon: 'success' })
       await this.load()
     } catch (err) {

@@ -1,4 +1,6 @@
 {
   "usingComponents": {},
-  "navigationBarTitleText": "菜谱"
+  "navigationBarTitleText": "菜谱",
+  "enablePullDownRefresh": true,
+  "backgroundTextStyle": "light"
 }

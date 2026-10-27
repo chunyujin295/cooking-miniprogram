@@ -1,4 +1,5 @@
 import { BASE_URL } from '../../../config/env'
+import { freshness } from '../../../store/freshness'
 import { confirmRecipeNutrition } from '../../../services/nutrition'
 import {
   archiveRecipe,
@@ -66,6 +67,7 @@ Page({
     try {
       const nutrition = await confirmRecipeNutrition(this.data.id)
       this.setData({ 'recipe.nutrition': nutrition })
+      freshness.invalidate('stats')
       wx.showToast({ title: '已确认', icon: 'success' })
     } catch (err) {
       this.setData({ error: err instanceof Error ? err.message : '确认失败' })
@@ -88,6 +90,8 @@ Page({
         await archiveRecipe(recipe.id)
         wx.showToast({ title: '已归档', icon: 'success' })
       }
+      // 列表按「在用 / 已归档」过滤，返回时要看到新状态
+      freshness.invalidate('recipe', 'order')
       await this.load()
     } catch (err) {
       wx.showToast({ title: err instanceof Error ? err.message : '操作失败', icon: 'none' })

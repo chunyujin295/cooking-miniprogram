@@ -73,25 +73,37 @@ export class MinioStorage implements StorageAdapter, OnModuleInit {
     }
   }
 
-  /** 用 JWT 密钥对 key+过期时间签名，避免依赖存储侧的对外域名 */
-  signGetUrl(key: string, expiresInSeconds: number): string {
-    const expiresAt = Math.floor(Date.now() / 1000) + expiresInSeconds
-    const sig = this.sign(key, expiresAt)
-    return `/media/file?key=${encodeURIComponent(key)}&exp=${expiresAt}&sig=${sig}`
+  /** 用 JWT 密钥对 key+过期时间（+缩略图宽度）签名，避免依赖存储侧的对外域名 */
+  signGetUrl(key: string, expiresInSeconds: number, width?: number): string {
+    const expiresAt = this.stableExpiry(expiresInSeconds)
+    const sig = this.sign(key, expiresAt, width)
+    const widthPart = width ? `&w=${width}` : ''
+    return `/media/file?key=${encodeURIComponent(key)}&exp=${expiresAt}&sig=${sig}${widthPart}`
   }
 
-  verifyGetUrl(key: string, exp: number, sig: string): boolean {
+  /**
+   * 按有效期对齐过期时间：同一时间窗内生成的地址完全一致，
+   * 小程序/浏览器才能命中图片缓存，不会每次刷新都重新下载。
+   */
+  private stableExpiry(expiresInSeconds: number): number {
+    const now = Math.floor(Date.now() / 1000)
+    return (Math.floor(now / expiresInSeconds) + 2) * expiresInSeconds
+  }
+
+  verifyGetUrl(key: string, exp: number, sig: string, width?: number): boolean {
     if (!Number.isFinite(exp) || exp * 1000 < Date.now()) {
       return false
     }
-    const expected = this.sign(key, exp)
+    const expected = this.sign(key, exp, width)
     const a = Buffer.from(expected)
     const b = Buffer.from(sig)
     return a.length === b.length && timingSafeEqual(a, b)
   }
 
-  private sign(key: string, expiresAt: number): string {
-    return createHmac('sha256', this.config.jwtSecret).update(`${key}|${expiresAt}`).digest('hex')
+  private sign(key: string, expiresAt: number, width?: number): string {
+    // 保留旧格式签名（不含宽度），让历史上已下发的链接继续有效
+    const payload = width ? `${key}|${expiresAt}|w${width}` : `${key}|${expiresAt}`
+    return createHmac('sha256', this.config.jwtSecret).update(payload).digest('hex')
   }
 
   private requireClient(): Client {

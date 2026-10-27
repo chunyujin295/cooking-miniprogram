@@ -6,6 +6,7 @@ import {
   type StatsOverviewView,
 } from '../../services/stats'
 import { session } from '../../store/session'
+import { freshness } from '../../store/freshness'
 
 interface TopRow {
   name: string
@@ -41,6 +42,9 @@ Page({
       wx.reLaunch({ url: '/pages/auth/login/index' })
       return
     }
+    if (!freshness.stale('stats')) {
+      return
+    }
     void this.load()
   },
 
@@ -70,6 +74,7 @@ Page({
         })),
         loading: false,
       })
+      freshness.touch('stats')
     } catch (err) {
       this.setData({ loading: false, error: err instanceof Error ? err.message : '加载失败' })
     }

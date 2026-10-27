@@ -18,8 +18,8 @@ export interface StoredObject {
 export interface StorageAdapter {
   putObject(input: PutObjectInput): Promise<{ key: string }>
   getObject(key: string): Promise<StoredObject>
-  /** 生成对外可访问的临时签名地址（桶本身不开放公开读） */
-  signGetUrl(key: string, expiresInSeconds: number): string
+  /** 生成对外可访问的临时签名地址（桶本身不开放公开读）；width 为缩略图宽度，参与签名 */
+  signGetUrl(key: string, expiresInSeconds: number, width?: number): string
   /** 校验签名地址是否有效且未过期 */
-  verifyGetUrl(key: string, expiresAt: number, sig: string): boolean
+  verifyGetUrl(key: string, expiresAt: number, sig: string, width?: number): boolean
 }

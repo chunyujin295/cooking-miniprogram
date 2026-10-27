@@ -6,6 +6,7 @@ import {
   type TagView,
 } from '../../services/recipe'
 import { session } from '../../store/session'
+import { freshness } from '../../store/freshness'
 
 interface CardView extends RecipeListItemView {
   cover: string
@@ -32,6 +33,10 @@ Page({
       wx.reLaunch({ url: '/pages/auth/login/index' })
       return
     }
+    // 短时间内在 tab 之间来回切换时复用上次结果
+    if (!freshness.stale('recipe')) {
+      return
+    }
     void this.reload()
   },
 
@@ -49,6 +54,7 @@ Page({
         recipes,
         loading: false,
       })
+      freshness.touch('recipe')
     } catch (err) {
       this.setData({ loading: false, error: err instanceof Error ? err.message : '加载失败' })
     }
@@ -75,6 +81,7 @@ Page({
     try {
       const recipes = await this.fetchRecipes()
       this.setData({ recipes, loading: false })
+      freshness.touch('recipe')
     } catch (err) {
       this.setData({ loading: false, error: err instanceof Error ? err.message : '加载失败' })
     }

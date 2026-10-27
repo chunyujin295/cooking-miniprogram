@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common'
 import { Prisma } from '@prisma/client'
 import { PrismaService } from '../../infra/database/prisma.service'
-import { MediaService } from '../media/media.service'
+import { COVER_WIDTH, DETAIL_WIDTH, MediaService } from '../media/media.service'
 import { toNutritionView, type NutritionView } from '../nutrition/nutrition.types'
 import type { CreateRecipeDto } from './dto/create-recipe.dto'
 import { parseTagIds, type ListRecipesQuery } from './dto/list-recipes.query'
@@ -295,7 +295,7 @@ export class RecipeService {
     return {
       id: recipe.id,
       name: recipe.name,
-      coverUrl: cover ? this.mediaService.signUrls([cover])[0] : null,
+      coverUrl: cover ? this.mediaService.signUrls([cover], COVER_WIDTH)[0] : null,
       totalMinutes: recipe.prepMinutes + recipe.cookMinutes,
       tags: recipe.tags.map((item) => ({ id: item.tag.id, name: item.tag.name })),
       isArchived: recipe.status === 'archived',
@@ -312,7 +312,7 @@ export class RecipeService {
       cookMinutes: recipe.cookMinutes,
       seasonMonths: recipe.seasonMonths,
       imageUrls: recipe.imageUrls,
-      images: this.mediaService.signUrls(recipe.imageUrls),
+      images: this.mediaService.signUrls(recipe.imageUrls, DETAIL_WIDTH),
       ingredients: recipe.ingredients.map((item) => ({
         name: item.name,
         quantity: item.quantity,
@@ -321,7 +321,9 @@ export class RecipeService {
       steps: recipe.steps.map((step) => ({
         stepNo: step.stepNo,
         content: step.content,
-        imageUrl: step.imageUrl ? this.mediaService.signUrls([step.imageUrl])[0] : null,
+        imageUrl: step.imageUrl
+          ? this.mediaService.signUrls([step.imageUrl], COVER_WIDTH)[0]
+          : null,
       })),
       tagIds: recipe.tags.map((item) => item.tagId),
       source: recipe.source,

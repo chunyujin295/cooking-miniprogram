@@ -19,6 +19,7 @@ import {
 } from '../../services/recipe'
 import { checkDietary } from '../../services/dietary'
 import { session as authSession } from '../../store/session'
+import { freshness } from '../../store/freshness'
 import { toDateKey } from '../../utils/date'
 
 interface DishRow extends RecipeListItemView {
@@ -115,7 +116,15 @@ Page({
       forceReload = true
     }
     // 从菜谱详情返回时不清空尚未提交的选择
+    if (!forceReload && !freshness.stale('order')) {
+      return
+    }
     void this.bootstrap(!forceReload)
+  },
+
+  async onPullDownRefresh() {
+    await this.bootstrap(true)
+    wx.stopPullDownRefresh()
   },
 
   async bootstrap(preserveLocal = false) {
@@ -135,6 +144,7 @@ Page({
         })),
         recipes: dishes,
       })
+      freshness.touch('order')
       if (preserveLocal && this.data.dirty && this.data.sessionId) {
         this.setData({ loading: false })
         return
@@ -247,6 +257,7 @@ Page({
         snackSessions: sessions.filter((item) => item.mealType === 'snack'),
       })
       await this.loadDetail(created.id)
+      freshness.invalidate('home')
     } catch (err) {
       this.setData({ error: err instanceof Error ? err.message : '新增加餐失败' })
     }
@@ -279,6 +290,7 @@ Page({
               : {}),
           })
           wx.showToast({ title: '已删除', icon: 'success' })
+          freshness.invalidate('home')
         } catch (err) {
           this.setData({ error: err instanceof Error ? err.message : '删除失败' })
         }
@@ -487,6 +499,8 @@ Page({
         })),
       })
       await submitMyOrder(this.data.sessionId)
+      // 提交后首页/制作/统计的数据都变了，下次进入各自 tab 时重新拉取
+      freshness.invalidate('home', 'production', 'stats')
       wx.showToast({ title: '已提交给家人', icon: 'success' })
       const sessions = await listMealSessions(this.data.date)
       this.setData({ sessions, snackSessions: sessions.filter((i) => i.mealType === 'snack') })

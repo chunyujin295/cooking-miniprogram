@@ -10,6 +10,7 @@ import {
   updateRecipe,
 } from '../../../services/recipe'
 import type { NutritionDraft, RecipeDraft } from '../../../utils/recipeDraft'
+import { freshness } from '../../../store/freshness'
 
 interface ImageItem {
   key: string
@@ -255,6 +256,7 @@ Page({
         this.setData({ deleting: true, error: '' })
         try {
           await deleteRecipe(this.data.id)
+          freshness.invalidate('recipe', 'order', 'stats', 'home')
           wx.showToast({ title: '已删除', icon: 'success' })
           setTimeout(() => wx.switchTab({ url: '/pages/recipe/index' }), 600)
         } catch (err) {
@@ -314,6 +316,7 @@ Page({
     try {
       if (this.data.id) {
         await updateRecipe(this.data.id, payload)
+        freshness.invalidate('recipe', 'order', 'stats')
         wx.showToast({ title: '已保存', icon: 'success' })
         setTimeout(() => wx.navigateBack(), 600)
       } else {
@@ -324,6 +327,7 @@ Page({
             () => undefined,
           )
         }
+        freshness.invalidate('recipe', 'order', 'stats')
         wx.showToast({ title: '已创建', icon: 'success' })
         wx.redirectTo({ url: `/pages/recipe/detail/index?id=${created.id}` })
       }
