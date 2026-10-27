@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ConflictException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common'
@@ -184,6 +185,27 @@ export class RecipeService {
       data: { status: 'active', archivedAt: null },
     })
     return { id, isArchived: false }
+  }
+
+  /**
+   * 彻底删除：只允许删除从未参与点菜/制作/出餐的菜谱。
+   * 有历史引用时保留记录完整性，提示改用归档。
+   */
+  async remove(userId: string, id: string): Promise<{ id: string }> {
+    const householdId = await this.requireHouseholdId(userId)
+    await this.requireOwnedRecipe(householdId, id)
+
+    const [orders, tasks, servings] = await Promise.all([
+      this.prisma.personalOrderItem.count({ where: { recipeId: id } }),
+      this.prisma.productionTaskItem.count({ where: { recipeId: id } }),
+      this.prisma.servingRecord.count({ where: { recipeId: id } }),
+    ])
+    if (orders + tasks + servings > 0) {
+      throw new ConflictException('这道菜已有历史点菜或出餐记录，不能删除；可以改为归档')
+    }
+
+    await this.prisma.recipe.delete({ where: { id } })
+    return { id }
   }
 
   async listTags(

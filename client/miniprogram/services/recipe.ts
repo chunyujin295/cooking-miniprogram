@@ -103,6 +103,11 @@ export function archiveRecipe(id: string): Promise<{ id: string; isArchived: boo
   return request({ path: `/recipes/${id}/archive`, method: 'POST' })
 }
 
+/** 彻底删除；有历史点菜/出餐记录时服务端返回 409 */
+export function deleteRecipe(id: string): Promise<{ id: string }> {
+  return request<{ id: string }>({ path: `/recipes/${id}`, method: 'DELETE' })
+}
+
 export function restoreRecipe(id: string): Promise<{ id: string; isArchived: boolean }> {
   return request({ path: `/recipes/${id}/restore`, method: 'POST' })
 }

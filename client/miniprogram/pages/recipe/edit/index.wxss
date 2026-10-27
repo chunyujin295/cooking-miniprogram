@@ -205,6 +205,25 @@
   margin: 12rpx 0;
 }
 
-.save {
+.save-row {
+  display: flex;
+  gap: 16rpx;
   margin: 24rpx 0 60rpx;
+}
+
+.save-row .save {
+  flex: 1;
+  margin: 0;
+}
+
+.btn-danger {
+  flex: 0 0 200rpx;
+  padding: 20rpx 0;
+  border: 1rpx solid #e0b4b0;
+  border-radius: var(--radius-pill);
+  background: #fff;
+  color: #a33;
+  font-size: 28rpx;
+  text-align: center;
+  line-height: 1.4;
 }

@@ -4,6 +4,7 @@ import {
   chooseAndUploadImages,
   createRecipe,
   createTag,
+  deleteRecipe,
   getRecipe,
   listTags,
   updateRecipe,
@@ -55,6 +56,7 @@ Page({
     uploading: false,
     loading: true,
     saving: false,
+    deleting: false,
     error: '',
   },
 
@@ -234,6 +236,34 @@ Page({
     const index = Number(e.currentTarget.dataset.index)
     const next = this.data.steps.filter((_, i) => i !== index)
     this.setData({ steps: next.length ? next : [{ content: '' }] })
+  },
+
+  /** 删除需要二次确认；有历史点菜记录的菜谱会被服务端拒绝，提示改用归档 */
+  onDelete() {
+    if (!this.data.id || this.data.deleting) {
+      return
+    }
+    wx.showModal({
+      title: '删除菜谱',
+      content: '删除后无法恢复。已有历史点菜或出餐记录的菜谱不能删除，可以改为归档。',
+      confirmText: '删除',
+      confirmColor: '#a33',
+      success: async (res) => {
+        if (!res.confirm) {
+          return
+        }
+        this.setData({ deleting: true, error: '' })
+        try {
+          await deleteRecipe(this.data.id)
+          wx.showToast({ title: '已删除', icon: 'success' })
+          setTimeout(() => wx.switchTab({ url: '/pages/recipe/index' }), 600)
+        } catch (err) {
+          this.setData({ error: err instanceof Error ? err.message : '删除失败' })
+        } finally {
+          this.setData({ deleting: false })
+        }
+      },
+    })
   },
 
   async onSave() {

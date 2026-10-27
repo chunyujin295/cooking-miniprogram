@@ -100,6 +100,9 @@
 
     <view wx:if="{{error}}" class="error">{{error}}</view>
 
-    <button class="btn-primary save" loading="{{saving}}" bindtap="onSave">保存</button>
+    <view class="save-row">
+      <button wx:if="{{id}}" class="btn-danger" loading="{{deleting}}" bindtap="onDelete">删除</button>
+      <button class="btn-primary save" loading="{{saving}}" bindtap="onSave">保存</button>
+    </view>
   </block>
 </view>

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common'
 import { CurrentUser, type AuthUser } from '../../common/decorators/current-user.decorator'
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard'
 import { CreateRecipeDto } from './dto/create-recipe.dto'
@@ -43,6 +43,12 @@ export class RecipeController {
     @Body() dto: CreateRecipeDto,
   ): Promise<RecipeDetailView> {
     return this.recipeService.update(user.userId, id, dto)
+  }
+
+  /** 彻底删除；有历史点菜/出餐记录时返回 409，建议归档 */
+  @Delete(':id')
+  remove(@CurrentUser() user: AuthUser, @Param('id') id: string): Promise<{ id: string }> {
+    return this.recipeService.remove(user.userId, id)
   }
 
   @Post(':id/archive')
