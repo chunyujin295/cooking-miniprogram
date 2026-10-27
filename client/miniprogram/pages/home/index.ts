@@ -15,6 +15,7 @@ interface MemberItem {
   userId: string
   name: string
   initial: string
+  avatar: string
   role: string
 }
 
@@ -58,6 +59,7 @@ Page({
           userId: m.userId,
           name: m.nickname || '家人',
           initial: (m.nickname || '家').slice(0, 1),
+          avatar: m.avatarUrl ? `${BASE_URL}${m.avatarUrl}` : '',
           role: m.role === 'owner' ? '创建者' : '成员',
         })),
         meals: sessions.map((item) => ({

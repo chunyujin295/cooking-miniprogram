@@ -15,7 +15,8 @@
 
   <view class="card member-card">
     <view class="member" wx:for="{{members}}" wx:key="userId">
-      <view class="avatar">{{item.initial}}</view>
+      <image wx:if="{{item.avatar}}" class="avatar avatar-img" src="{{item.avatar}}" mode="aspectFill" />
+      <view wx:else class="avatar">{{item.initial}}</view>
       <view class="member-name">{{item.name}}</view>
       <view class="member-role">{{item.role}}</view>
     </view>

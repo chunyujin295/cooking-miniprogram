@@ -137,6 +137,10 @@
   margin-right: 20rpx;
 }
 
+.avatar-img {
+  background: var(--color-surface-2);
+}
+
 .member-name {
   flex: 1;
   font-size: 28rpx;
