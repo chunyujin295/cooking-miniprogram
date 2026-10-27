@@ -1,0 +1,48 @@
+<view class="page">
+  <view class="page-title">{{householdName || '家庭餐桌'}}</view>
+  <view class="muted">{{members.length}} 位成员</view>
+
+  <view class="me-row">
+    <image wx:if="{{myAvatar}}" class="me-avatar" src="{{myAvatar}}" mode="aspectFill" />
+    <view wx:else class="me-avatar me-avatar-empty">我</view>
+    <view class="me-name">{{myName}}</view>
+    <view class="me-link" bindtap="onProfile">设置 ›</view>
+    <view class="notice-link" bindtap="onNotifications">
+      <text>通知</text>
+      <text wx:if="{{unread}}" class="badge">{{unread}}</text>
+    </view>
+  </view>
+
+  <view class="card member-card">
+    <view class="member" wx:for="{{members}}" wx:key="userId">
+      <view class="avatar">{{item.initial}}</view>
+      <view class="member-name">{{item.name}}</view>
+      <view class="member-role">{{item.role}}</view>
+    </view>
+    <view wx:if="{{loading}}" class="muted">加载中…</view>
+  </view>
+
+  <button class="btn-primary invite-btn" bindtap="onCreateInvite">生成邀请码</button>
+  <view wx:if="{{inviteCode}}" class="invite" bindtap="onCopyInvite">邀请码 {{inviteCode}} · 点击复制</view>
+
+  <view class="card meal-card">
+    <view class="meal-head">
+      <view class="meal-title">今日菜单</view>
+    </view>
+    <view wx:for="{{meals}}" wx:key="id" class="meal-row">
+      <text>{{item.label}}</text>
+      <text class="muted">{{item.statusText}} · {{item.itemCount}} 份 · {{item.submittedCount}}/{{item.memberCount}} 已提交</text>
+    </view>
+    <view wx:if="{{!meals.length && !loading}}" class="muted">今天还没开始点菜</view>
+  </view>
+
+  <view class="card nav-card" bindtap="onOpenCalendar">
+    <view class="nav-main">
+      <view class="nav-title">饮食日历</view>
+      <view class="muted">按月查看每天的餐次与出餐情况</view>
+    </view>
+    <text class="nav-arrow">›</text>
+  </view>
+
+  <view wx:if="{{error}}" class="error">{{error}}</view>
+</view>

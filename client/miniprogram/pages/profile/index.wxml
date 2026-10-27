@@ -1,0 +1,69 @@
+<view class="page">
+  <view class="section-title">我的资料</view>
+
+  <view class="card profile">
+    <button class="avatar-btn" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar">
+      <image wx:if="{{avatarUrl}}" class="avatar" src="{{avatarUrl}}" mode="aspectFill" />
+      <view wx:else class="avatar avatar-empty">{{uploading ? '上传中' : '选择头像'}}</view>
+    </button>
+    <view class="muted">点击头像从相册或相机选择，微信授权头像也可用</view>
+  </view>
+
+  <view class="card field-card">
+    <view class="label">昵称</view>
+    <input
+      class="input"
+      type="nickname"
+      value="{{nickname}}"
+      placeholder="家里怎么称呼你"
+      bindinput="onNicknameInput"
+    />
+    <view class="muted">这个名字会显示在成员列表、点菜汇总和制作任务里</view>
+  </view>
+
+  <view class="card field-card">
+    <view class="label">过敏原</view>
+    <view class="chips">
+      <view
+        wx:for="{{allergens}}"
+        wx:key="*this"
+        class="chip on"
+        data-index="{{index}}"
+        catchtap="onRemoveAllergen"
+      >{{item}} ×</view>
+    </view>
+    <view class="inline-add">
+      <input class="input slim" value="{{newAllergen}}" placeholder="如 花生 / 虾" bindinput="onAllergenInput" />
+      <view class="mini-btn" bindtap="onAddAllergen">添加</view>
+    </view>
+
+    <view class="label second">忌口 / 不吃</view>
+    <view class="chips">
+      <view
+        wx:for="{{avoidances}}"
+        wx:key="*this"
+        class="chip"
+        data-index="{{index}}"
+        catchtap="onRemoveAvoidance"
+      >{{item}} ×</view>
+    </view>
+    <view class="inline-add">
+      <input class="input slim" value="{{newAvoidance}}" placeholder="如 香菜 / 内脏" bindinput="onAvoidanceInput" />
+      <view class="mini-btn" bindtap="onAddAvoidance">添加</view>
+    </view>
+
+    <view class="muted hint-text">点菜时命中这些食材会提示你，但不会阻止你点</view>
+    <button class="btn-ghost dietary-btn" loading="{{dietarySaving}}" bindtap="onSaveDietary">保存忌口设置</button>
+  </view>
+
+  <view class="card field-card">
+    <view class="label">微信通知</view>
+    <view class="muted">开餐确认、接单、出餐时收到微信服务通知；每次授权只能收到一条</view>
+    <button class="btn-ghost notify-btn" bindtap="onEnableNotify">开启微信通知</button>
+  </view>
+
+  <view wx:if="{{error}}" class="error">{{error}}</view>
+
+  <button class="btn-primary save" loading="{{saving}}" bindtap="onSave">保存</button>
+  <view wx:if="{{loading}}" class="muted">加载中…</view>
+</view>

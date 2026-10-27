@@ -1,0 +1,91 @@
+.head {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  margin-bottom: 20rpx;
+}
+
+.title {
+  font-size: 34rpx;
+  font-weight: 600;
+}
+
+.section {
+  margin-bottom: 16rpx;
+}
+
+.section-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  margin-bottom: 12rpx;
+}
+
+.member-block {
+  padding: 10rpx 0;
+  border-top: 1rpx solid var(--color-line);
+}
+
+.member-block:first-of-type {
+  border-top: none;
+}
+
+.member-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6rpx;
+  font-size: 26rpx;
+  font-weight: 600;
+}
+
+.chip {
+  padding: 2rpx 16rpx;
+  border-radius: 8rpx;
+  background: var(--color-surface-2);
+  color: var(--color-muted);
+  font-size: 22rpx;
+}
+
+.chip.on {
+  background: var(--color-accent-weak);
+  color: var(--color-accent);
+}
+
+.dish-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12rpx;
+  padding: 6rpx 0 6rpx 12rpx;
+  font-size: 26rpx;
+}
+
+.dish-row.total {
+  padding-left: 0;
+}
+
+.shopping-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16rpx;
+  padding: 20rpx;
+  border: 1rpx solid var(--color-line);
+  border-radius: var(--radius-card);
+  font-size: 26rpx;
+  color: var(--color-accent);
+}
+
+.button-wrap {
+  margin: 24rpx 0 40rpx;
+}
+
+.tip {
+  margin-top: 8rpx;
+  font-size: 23rpx;
+}
+
+.error {
+  margin-bottom: 12rpx;
+  color: #a33;
+  font-size: 24rpx;
+}

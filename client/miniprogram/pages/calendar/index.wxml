@@ -1,0 +1,54 @@
+<view class="page">
+  <view class="month-bar">
+    <view class="arrow" bindtap="onPrev">‹</view>
+    <view class="month">{{monthLabel}}</view>
+    <view class="arrow" bindtap="onNext">›</view>
+  </view>
+
+  <view class="week-row">
+    <text wx:for="{{weekLabels}}" wx:key="*this" class="week-cell">{{item}}</text>
+  </view>
+
+  <view class="grid">
+    <view
+      wx:for="{{cells}}"
+      wx:key="index"
+      class="cell {{item.date ? '' : 'blank'}} {{item.selected ? 'on' : ''}} {{item.isToday ? 'today' : ''}}"
+      data-date="{{item.date}}"
+      bindtap="onSelectDay"
+    >
+      <text wx:if="{{item.date}}" class="day">{{item.day}}</text>
+      <view wx:if="{{item.date && item.count}}" class="dots">
+        <view wx:for="{{item.count > 3 ? 3 : item.count}}" wx:for-item="dot" wx:key="*this" class="dot {{item.served ? 'served' : (item.hasOrder ? 'ordered' : '')}}"></view>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{error}}" class="error">{{error}}</view>
+
+  <view class="card section">
+    <view class="section-head">
+      <view class="section-title">{{selectedLabel || '选择日期'}}</view>
+      <view class="link" bindtap="onGoOrder">去这天的点菜 ›</view>
+    </view>
+    <view wx:if="{{!daySessions.length}}" class="muted">这天还没有餐次记录</view>
+    <view
+      wx:for="{{daySessions}}"
+      wx:key="id"
+      class="session-row"
+      data-type="{{item.mealType}}"
+      bindtap="onOpenSession"
+    >
+      <text>{{item.label}}</text>
+      <text class="chip {{item.served ? 'on' : ''}}">{{item.statusLabel}}</text>
+    </view>
+  </view>
+
+  <view class="legend muted">
+    <view class="dot served"></view><text>已出餐</text>
+    <view class="dot ordered"></view><text>已点菜</text>
+    <view class="dot"></view><text>未开始</text>
+  </view>
+
+  <view wx:if="{{loading}}" class="muted">加载中…</view>
+</view>

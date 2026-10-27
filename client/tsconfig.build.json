@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "rootDir": "miniprogram",
+    "outDir": "miniprogram",
+    "sourceMap": false,
+    "declaration": false,
+    "removeComments": false
+  },
+  "include": ["miniprogram/**/*.ts"],
+  "exclude": ["node_modules", "miniprogram/miniprogram_npm"]
+}

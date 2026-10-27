@@ -1,0 +1,165 @@
+.tabs {
+  display: flex;
+  gap: 8rpx;
+  padding: 6rpx;
+  border-radius: var(--radius-pill);
+  background: var(--color-bar);
+  margin-bottom: 20rpx;
+}
+
+.tab {
+  flex: 1;
+  text-align: center;
+  padding: 12rpx 0;
+  border-radius: var(--radius-pill);
+  font-size: 26rpx;
+  color: var(--color-ink-2);
+}
+
+.tab.on {
+  background: #ffffff;
+  color: var(--color-accent);
+  font-weight: 600;
+}
+
+.summary-row {
+  display: flex;
+  gap: 12rpx;
+  margin-bottom: 16rpx;
+}
+
+.stat {
+  flex: 1;
+  text-align: center;
+  padding: 20rpx 8rpx;
+}
+
+.stat-num {
+  font-size: 40rpx;
+  font-weight: 600;
+  color: var(--color-accent);
+}
+
+.kcal-line {
+  display: flex;
+  align-items: baseline;
+  gap: 8rpx;
+}
+
+.kcal {
+  font-size: 46rpx;
+  font-weight: 600;
+  color: var(--color-accent);
+}
+
+.kcal-sub {
+  margin-top: 4rpx;
+  font-size: 24rpx;
+}
+
+.section {
+  margin-bottom: 16rpx;
+}
+
+.section-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  margin-bottom: 12rpx;
+}
+
+.note {
+  margin-top: -4rpx;
+  margin-bottom: 12rpx;
+  font-size: 22rpx;
+}
+
+.bar-row {
+  margin-bottom: 14rpx;
+}
+
+.bar-head {
+  display: flex;
+  justify-content: space-between;
+  font-size: 25rpx;
+  margin-bottom: 6rpx;
+}
+
+.bar-track {
+  height: 12rpx;
+  border-radius: 6rpx;
+  background: var(--color-surface-2);
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  border-radius: 6rpx;
+  background: var(--color-accent);
+  min-width: 4rpx;
+}
+
+.bar-fill.light {
+  background: #7fae97;
+}
+
+.random {
+  display: flex;
+  gap: 16rpx;
+  padding: 12rpx;
+  border: 1rpx solid var(--color-line);
+  border-radius: 16rpx;
+  margin-bottom: 16rpx;
+}
+
+.random-cover {
+  width: 140rpx;
+  height: 140rpx;
+  border-radius: 12rpx;
+  background: var(--color-surface-2);
+  flex-shrink: 0;
+}
+
+.random-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22rpx;
+  color: var(--color-muted);
+}
+
+.random-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.random-name {
+  font-size: 30rpx;
+  font-weight: 600;
+}
+
+.random-actions {
+  display: flex;
+  gap: 16rpx;
+  margin-top: 16rpx;
+}
+
+.small {
+  flex: 1;
+  font-size: 26rpx;
+  padding: 16rpx 0;
+}
+
+.btn-ghost {
+  background: var(--color-surface);
+  color: var(--color-ink-2);
+  border: 1rpx solid var(--color-line);
+  border-radius: var(--radius-pill);
+}
+
+.error {
+  margin-bottom: 12rpx;
+  color: #a33;
+  font-size: 24rpx;
+}

@@ -1,0 +1,25 @@
+<view class="page">
+  <view class="page-title">加入家庭</view>
+  <view class="muted">一个家庭只有三个人，建好后把邀请码发给家人即可。</view>
+
+  <view class="seg">
+    <view class="seg-item {{mode === 'create' ? 'on' : ''}}" data-mode="create" bindtap="onModeChange">创建家庭</view>
+    <view class="seg-item {{mode === 'join' ? 'on' : ''}}" data-mode="join" bindtap="onModeChange">输入邀请码</view>
+  </view>
+
+  <block wx:if="{{mode === 'create'}}">
+    <view class="label">家庭名称</view>
+    <input class="input" value="{{name}}" data-field="name" bindinput="onInput" placeholder="例如：我们家" maxlength="20" />
+  </block>
+
+  <block wx:else>
+    <view class="label">邀请码</view>
+    <input class="input" value="{{code}}" data-field="code" bindinput="onInput" placeholder="8 位邀请码" maxlength="8" />
+  </block>
+
+  <button class="btn-primary submit" bindtap="onSubmit" loading="{{loading}}" disabled="{{loading}}">
+    {{mode === 'create' ? '创建并进入' : '加入家庭'}}
+  </button>
+
+  <view wx:if="{{error}}" class="error">{{error}}</view>
+</view>

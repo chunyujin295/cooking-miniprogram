@@ -1,0 +1,94 @@
+<view class="page">
+  <view class="tabs">
+    <view class="tab {{days === 7 ? 'on' : ''}}" data-days="7" bindtap="onDaysTap">近 7 天</view>
+    <view class="tab {{days === 30 ? 'on' : ''}}" data-days="30" bindtap="onDaysTap">近 30 天</view>
+  </view>
+
+  <view wx:if="{{error}}" class="error">{{error}}</view>
+
+  <view class="summary-row">
+    <view class="card stat">
+      <view class="stat-num">{{overview.orderedQuantity || 0}}</view>
+      <view class="muted">已点菜份数</view>
+    </view>
+    <view class="card stat">
+      <view class="stat-num">{{overview.servedQuantity || 0}}</view>
+      <view class="muted">已出餐份数</view>
+    </view>
+    <view class="card stat">
+      <view class="stat-num">{{overview.servedMeals || 0}}</view>
+      <view class="muted">已出餐餐次</view>
+    </view>
+  </view>
+
+  <view class="card section">
+    <view class="section-title">热量（估算）</view>
+    <block wx:if="{{overview && overview.nutrition}}">
+      <view class="kcal-line">
+        <text class="kcal">{{overview.nutrition.totalKcal}}</text>
+        <text class="muted">kcal 合计</text>
+      </view>
+      <view class="muted kcal-sub">
+        日均 {{overview.nutrition.dailyAvgKcal}} · 每餐约 {{overview.nutrition.mealAvgKcal}}
+      </view>
+      <view class="muted kcal-sub">
+        蛋白 {{overview.nutrition.totalProteinG}}g · 脂肪 {{overview.nutrition.totalFatG}}g · 碳水 {{overview.nutrition.totalCarbohydrateG}}g
+      </view>
+      <view class="muted note">
+        按出餐份数推算，{{overview.nutrition.coveredRecipes}}/{{overview.nutrition.totalRecipes}} 道菜有数据{{overview.nutrition.unconfirmedRecipes ? '（' + overview.nutrition.unconfirmedRecipes + ' 道待确认）' : ''}}
+      </view>
+    </block>
+    <block wx:else>
+      <view class="muted">还没有热量数据。去菜谱详情页点「估算热量」，出餐后这里会自动汇总。</view>
+    </block>
+  </view>
+
+  <view class="card section">
+    <view class="section-title">被点最多的菜</view>
+    <view class="muted note">按已提交的点菜统计，不必等到出餐</view>
+    <view wx:for="{{topRows}}" wx:key="name" class="bar-row">
+      <view class="bar-head">
+        <text>{{item.name}}</text>
+        <text class="muted">{{item.quantity}} 份 · {{item.orderCount}} 次</text>
+      </view>
+      <view class="bar-track">
+        <view class="bar-fill" style="width: {{item.percent}}%"></view>
+      </view>
+    </view>
+    <view wx:if="{{!topRows.length}}" class="muted">这段时间还没有点菜记录</view>
+  </view>
+
+  <view class="card section">
+    <view class="section-title">餐次分布（已出餐）</view>
+    <view wx:for="{{typeRows}}" wx:key="label" class="bar-row">
+      <view class="bar-head">
+        <text>{{item.label}}</text>
+        <text class="muted">{{item.count}} 餐</text>
+      </view>
+      <view class="bar-track">
+        <view class="bar-fill light" style="width: {{item.percent}}%"></view>
+      </view>
+    </view>
+  </view>
+
+  <view class="card section">
+    <view class="section-title">不知道吃什么？</view>
+    <view wx:if="{{random}}" class="random" bindtap="onOpenRandom">
+      <image wx:if="{{random.cover}}" class="random-cover" src="{{random.cover}}" mode="aspectFill" />
+      <view wx:else class="random-cover random-empty">无图</view>
+      <view class="random-body">
+        <view class="random-name">{{random.name}}</view>
+        <view class="muted">{{random.totalMinutes}} 分钟 · 点开看做法</view>
+      </view>
+    </view>
+    <view wx:else class="muted">从在售菜谱里随机抽一道，排除近 3 天吃过的</view>
+    <view class="random-actions">
+      <button class="btn-primary small" loading="{{picking}}" bindtap="onPick">
+        {{random ? '换一道' : '随机抽一道'}}
+      </button>
+      <button class="btn-ghost small" bindtap="onGoOrder">去点菜</button>
+    </view>
+  </view>
+
+  <view wx:if="{{loading}}" class="muted">加载中…</view>
+</view>

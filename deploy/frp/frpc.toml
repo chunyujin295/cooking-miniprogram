@@ -1,0 +1,17 @@
+# 家庭 Linux 主机端
+serverAddr = "CHANGE_ME_PUBLIC_SERVER_IP"
+serverPort = 7000
+
+auth.method = "token"
+auth.token = "CHANGE_ME_TO_A_LONG_RANDOM_TOKEN"
+
+transport.tls.enable = true
+# 断网后自动重连，而不是退出
+loginFailExit = false
+
+[[proxies]]
+name = "cooking-api"
+type = "tcp"
+localIP = "127.0.0.1"
+localPort = 3000
+remotePort = 3000

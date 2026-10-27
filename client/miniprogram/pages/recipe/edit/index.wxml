@@ -1,0 +1,105 @@
+<view class="page">
+  <view wx:if="{{loading}}" class="muted">加载中…</view>
+
+  <block wx:else>
+    <view wx:if="{{fromExternal}}" class="import-tip">
+      <view class="tip-title">以下内容来自你粘贴的文本，由你使用的 AI 整理，请核对后保存</view>
+      <view wx:for="{{importWarnings}}" wx:key="index" class="tip-warn">· {{item}}</view>
+    </view>
+
+    <view class="card section">
+      <view class="section-title">图片</view>
+      <view class="image-grid">
+        <view wx:for="{{images}}" wx:key="key" class="image-item">
+          <image class="image" src="{{item.url}}" mode="aspectFill" />
+          <view class="image-del" data-index="{{index}}" catchtap="onRemoveImage">×</view>
+        </view>
+        <view class="image-add" bindtap="onAddImages">
+          {{uploading ? '上传中…' : '＋ 添加'}}
+        </view>
+      </view>
+      <view class="muted">第一张作为封面，可多选；上传前自动压缩</view>
+    </view>
+
+    <view class="card section">
+      <view class="field">
+        <text class="label">菜名</text>
+        <input class="input" value="{{name}}" data-field="name" bindinput="onInput" placeholder="例如 番茄炒蛋" />
+      </view>
+      <view class="field">
+        <text class="label">简介</text>
+        <textarea class="textarea" value="{{description}}" data-field="description" bindinput="onInput" placeholder="可选，口味、来源、注意事项" maxlength="500" />
+      </view>
+    </view>
+
+    <view class="card section">
+      <view class="field-row">
+        <view class="field">
+          <text class="label">份数</text>
+          <input class="input" type="number" value="{{baseServings}}" data-field="baseServings" bindinput="onNumberInput" />
+        </view>
+        <view class="field">
+          <text class="label">准备(分钟)</text>
+          <input class="input" type="number" value="{{prepMinutes}}" data-field="prepMinutes" bindinput="onNumberInput" />
+        </view>
+        <view class="field">
+          <text class="label">烹饪(分钟)</text>
+          <input class="input" type="number" value="{{cookMinutes}}" data-field="cookMinutes" bindinput="onNumberInput" />
+        </view>
+      </view>
+
+      <view class="label">时令月份（不选表示全年）</view>
+      <view class="chips">
+        <view
+          wx:for="{{months}}"
+          wx:key="month"
+          class="chip {{item.on ? 'on' : ''}}"
+          data-month="{{item.month}}"
+          bindtap="onMonthToggle"
+        >{{item.month}}</view>
+      </view>
+    </view>
+
+    <view class="card section">
+      <view class="section-title">标签</view>
+      <view class="chips">
+        <view
+          wx:for="{{tags}}"
+          wx:key="id"
+          class="chip {{item.selected ? 'on' : ''}}"
+          data-id="{{item.id}}"
+          bindtap="onToggleTag"
+        >{{item.name}}</view>
+      </view>
+      <view class="inline-add">
+        <input class="input flex-1" value="{{newTag}}" bindinput="onNewTagInput" placeholder="新标签，如 下饭 / 快手" />
+        <view class="mini-btn" bindtap="onAddTag">添加</view>
+      </view>
+    </view>
+
+    <view class="card section">
+      <view class="section-title">食材</view>
+      <view wx:for="{{ingredients}}" wx:key="index" class="row-flex">
+        <input class="input flex-2" value="{{item.name}}" data-index="{{index}}" data-field="name" bindinput="onIngredientInput" placeholder="食材" />
+        <input class="input flex-1" value="{{item.quantity}}" data-index="{{index}}" data-field="quantity" bindinput="onIngredientInput" placeholder="用量" />
+        <input class="input flex-1" value="{{item.unit}}" data-index="{{index}}" data-field="unit" bindinput="onIngredientInput" placeholder="单位" />
+        <view class="del" data-index="{{index}}" bindtap="onRemoveIngredient">×</view>
+      </view>
+      <view class="mini-btn" bindtap="onAddIngredient">＋ 添加食材</view>
+    </view>
+
+    <view class="card section">
+      <view class="section-title">步骤</view>
+      <view wx:for="{{steps}}" wx:key="index" class="step-row">
+        <view class="step-no">{{index + 1}}</view>
+        <textarea class="textarea flex-1" value="{{item.content}}" data-index="{{index}}" bindinput="onStepInput" placeholder="这一步做什么" auto-height maxlength="500" />
+        <view class="del" data-index="{{index}}" bindtap="onRemoveStep">×</view>
+      </view>
+      <view class="mini-btn" bindtap="onAddStep">＋ 添加步骤</view>
+    </view>
+
+    <view wx:if="{{error}}" class="error">{{error}}</view>
+
+    <button class="btn-primary save" loading="{{saving}}" bindtap="onSave">保存</button>
+  </block>
+</view>

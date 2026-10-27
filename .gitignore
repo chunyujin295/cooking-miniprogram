@@ -1,0 +1,19 @@
+node_modules/
+dist/
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+project.private.config.json
+miniprogram_npm/
+.screenshots/
+
+# 小程序 TS 编译产物（npm run build:mp 生成）
+client/miniprogram/**/*.js
+
+# 临时打包文件
+_server-src.tgz
+
+# 密钥文件（含微信 AppSecret，禁止入库）
+docs/appid与密钥.txt

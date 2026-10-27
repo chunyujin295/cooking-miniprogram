@@ -1,0 +1,623 @@
+// 家庭餐桌 · 数据模型
+// 对应 PRD 1.1 第 9 节：用户与家庭 / 菜谱与营养 / 餐次与个人点菜 / 制作任务与出餐
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================
+// 枚举：与 packages/contracts 的取值保持一致
+// ============================================================
+
+enum MemberRole {
+  owner
+  member
+}
+
+enum MemberStatus {
+  active
+  left
+  removed
+}
+
+enum MealType {
+  breakfast
+  lunch
+  dinner
+  snack
+}
+
+enum MealSessionStatus {
+  not_started
+  ordering
+  pending_production
+  producing
+  partially_served
+  served
+  cancelled
+}
+
+enum PersonalOrderStatus {
+  draft
+  submitted
+  locked
+  archived
+  cancelled
+}
+
+enum ProductionTaskStatus {
+  pending
+  accepted
+  producing
+  completed
+  cancelled
+  failed
+  partially_completed
+}
+
+enum ProductionTaskItemStatus {
+  pending
+  completed
+  skipped
+}
+
+enum RecipeStatus {
+  active
+  archived
+  seasonal
+}
+
+enum NotificationStatus {
+  pending
+  sent
+  failed
+  skipped
+}
+
+// ============================================================
+// 用户与家庭
+// ============================================================
+
+model User {
+  id        String   @id @default(cuid())
+  openid    String   @unique
+  unionid   String?
+  nickname  String?
+  avatarUrl String?  @map("avatar_url")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  ownedHouseholds Household[]           @relation("HouseholdOwner")
+  memberships     HouseholdMember[]
+  dietaryProfiles MemberDietaryProfile[]
+  personalOrders  PersonalOrder[]
+  favorites       RecipeFavorite[]
+  assignedTasks   ProductionTask[]      @relation("TaskAssignee")
+  recordedServings ServingRecord[]      @relation("ServingRecorder")
+  intakes         NutritionIntake[]
+  notifications   Notification[]
+  auditLogs       AuditLog[]            @relation("AuditActor")
+  recipeImports   RecipeImport[]
+
+  @@map("users")
+}
+
+model Household {
+  id          String   @id @default(cuid())
+  name        String
+  ownerUserId String   @map("owner_user_id")
+  timezone    String   @default("Asia/Shanghai")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  owner           User                   @relation("HouseholdOwner", fields: [ownerUserId], references: [id])
+  members         HouseholdMember[]
+  invites         HouseholdInvite[]
+  dietaryProfiles MemberDietaryProfile[]
+  recipes         Recipe[]
+  tags            Tag[]
+  mealSessions    MealSession[]
+  shoppingLists   ShoppingList[]
+  notifications   Notification[]
+  auditLogs       AuditLog[]
+  recipeImports   RecipeImport[]
+
+  @@map("households")
+}
+
+model HouseholdMember {
+  id          String       @id @default(cuid())
+  householdId String       @map("household_id")
+  userId      String       @map("user_id")
+  role        MemberRole   @default(member)
+  status      MemberStatus @default(active)
+  joinedAt    DateTime     @default(now()) @map("joined_at")
+  leftAt      DateTime?    @map("left_at")
+
+  household Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // 同一用户不能重复加入同一家庭
+  @@unique([householdId, userId])
+  @@index([householdId, status])
+  @@map("household_members")
+}
+
+model HouseholdInvite {
+  id          String   @id @default(cuid())
+  householdId String   @map("household_id")
+  codeHash    String   @map("code_hash")
+  expiresAt   DateTime @map("expires_at")
+  maxUses     Int      @default(3) @map("max_uses")
+  usedCount   Int      @default(0) @map("used_count")
+  createdBy   String   @map("created_by")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  household Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
+
+  @@index([householdId])
+  @@map("household_invites")
+}
+
+model MemberDietaryProfile {
+  id          String   @id @default(cuid())
+  householdId String   @map("household_id")
+  userId      String   @map("user_id")
+  allergens   String[] @default([])
+  avoidances  String[] @default([])
+  note        String?
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  household Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([householdId, userId])
+  @@map("member_dietary_profiles")
+}
+
+// ============================================================
+// 菜谱与营养
+// ============================================================
+
+model Recipe {
+  id           String       @id @default(cuid())
+  householdId  String       @map("household_id")
+  name         String
+  // 菜谱图片（对象存储 key 的相对路径），第一张作为封面，数量不设上限
+  imageUrls    String[]     @default([]) @map("image_urls")
+  description  String?
+  baseServings Int          @default(1) @map("base_servings")
+  prepMinutes  Int          @default(0) @map("prep_minutes")
+  cookMinutes  Int          @default(0) @map("cook_minutes")
+  status       RecipeStatus @default(active)
+  // 时令菜的供应月份，1-12；为空表示不限制
+  seasonMonths Int[]        @default([]) @map("season_months")
+  // 数据来源：manual（手动录入）| external-ai（用户用外部 AI 按模板整理后导入）
+  source       String       @default("manual")
+  archivedAt   DateTime?    @map("archived_at")
+  version      Int          @default(1)
+  createdBy    String       @map("created_by")
+  createdAt    DateTime     @default(now()) @map("created_at")
+  updatedAt    DateTime     @updatedAt @map("updated_at")
+
+  household   Household            @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  ingredients RecipeIngredient[]
+  steps       RecipeStep[]
+  tags        RecipeTag[]
+  nutrition   RecipeNutrition?
+  favorites   RecipeFavorite[]
+  orderItems  PersonalOrderItem[]
+  taskItems   ProductionTaskItem[]
+  servings    ServingRecord[]
+  intakes     NutritionIntake[]
+
+  @@index([householdId, status])
+  @@index([householdId, name])
+  @@map("recipes")
+}
+
+model RecipeIngredient {
+  id        String  @id @default(cuid())
+  recipeId  String  @map("recipe_id")
+  name      String
+  quantity  String
+  unit      String
+  sortOrder Int     @default(0) @map("sort_order")
+
+  recipe Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  @@index([recipeId])
+  @@map("recipe_ingredients")
+}
+
+model RecipeStep {
+  id        String  @id @default(cuid())
+  recipeId  String  @map("recipe_id")
+  stepNo    Int     @map("step_no")
+  content   String
+  imageUrl  String? @map("image_url")
+
+  recipe Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  @@unique([recipeId, stepNo])
+  @@map("recipe_steps")
+}
+
+model Tag {
+  id          String @id @default(cuid())
+  householdId String @map("household_id")
+  name        String
+  category    String @default("flavor")
+
+  household Household   @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  recipes   RecipeTag[]
+
+  @@unique([householdId, name])
+  @@map("tags")
+}
+
+model RecipeTag {
+  recipeId String @map("recipe_id")
+  tagId    String @map("tag_id")
+
+  recipe Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  tag    Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([recipeId, tagId])
+  @@map("recipe_tags")
+}
+
+model RecipeNutrition {
+  recipeId       String  @id @map("recipe_id")
+  // 营养数据的计量基准：per_serving 或 per_100g
+  basisType      String  @default("per_serving") @map("basis_type")
+  basisQuantity  Float   @default(1) @map("basis_quantity")
+  energyKcal     Int     @map("energy_kcal")
+  proteinG       Float   @map("protein_g")
+  fatG           Float   @map("fat_g")
+  carbohydrateG  Float   @map("carbohydrate_g")
+  fiberG         Float?  @map("fiber_g")
+  sodiumMg       Float?  @map("sodium_mg")
+  // 估算来源与置信度，AI 估算须人工确认后置为 confirmed
+  source         String  @default("manual")
+  confidence     String  @default("medium")
+  isConfirmed    Boolean @default(false) @map("is_confirmed")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  recipe Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  @@map("recipe_nutrition")
+}
+
+model RecipeFavorite {
+  userId    String   @map("user_id")
+  recipeId  String   @map("recipe_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  recipe Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  @@id([userId, recipeId])
+  @@map("recipe_favorites")
+}
+
+// ============================================================
+// 餐次与个人点菜
+// ============================================================
+
+model MealSession {
+  id        String            @id @default(cuid())
+  householdId String          @map("household_id")
+  mealDate  DateTime          @map("meal_date") @db.Date
+  mealType  MealType          @map("meal_type")
+  // 加餐不限次数：早/中/晚固定 0，加餐从 1 递增
+  seq       Int               @default(0)
+  status    MealSessionStatus @default(not_started)
+  cutoffAt  DateTime?         @map("cutoff_at")
+  confirmedAt DateTime?       @map("confirmed_at")
+  confirmedBy String?         @map("confirmed_by")
+  createdAt DateTime          @default(now()) @map("created_at")
+  updatedAt DateTime          @updatedAt @map("updated_at")
+
+  household       Household         @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  personalOrders  PersonalOrder[]
+  aggregate       MealAggregate?
+  servingRecords  ServingRecord[]
+  shoppingLists   ShoppingList[]
+
+  @@unique([householdId, mealDate, mealType, seq])
+  @@index([householdId, mealDate])
+  @@map("meal_sessions")
+}
+
+model PersonalOrder {
+  id            String              @id @default(cuid())
+  mealSessionId String              @map("meal_session_id")
+  userId        String              @map("user_id")
+  status        PersonalOrderStatus @default(draft)
+  note          String?
+  submittedAt   DateTime?           @map("submitted_at")
+  version       Int                 @default(1)
+  createdAt     DateTime            @default(now()) @map("created_at")
+  updatedAt     DateTime            @updatedAt @map("updated_at")
+
+  mealSession MealSession         @relation(fields: [mealSessionId], references: [id], onDelete: Cascade)
+  user        User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items       PersonalOrderItem[]
+
+  // 每人每餐一份有效点菜单
+  @@unique([mealSessionId, userId])
+  @@map("personal_orders")
+}
+
+model PersonalOrderItem {
+  id                   String  @id @default(cuid())
+  personalOrderId      String  @map("personal_order_id")
+  recipeId             String  @map("recipe_id")
+  recipeVersion        Int     @map("recipe_version")
+  recipeNameSnapshot   String  @map("recipe_name_snapshot")
+  quantity             Int
+  // 多人共享菜：份数不为个人独占
+  isShared             Boolean @default(false) @map("is_shared")
+  note                 String?
+  nutritionSnapshot    Json?   @map("nutrition_snapshot")
+  sortOrder            Int     @default(0) @map("sort_order")
+
+  personalOrder PersonalOrder      @relation(fields: [personalOrderId], references: [id], onDelete: Cascade)
+  recipe        Recipe             @relation(fields: [recipeId], references: [id])
+  taskSources   ProductionTaskSource[]
+
+  @@index([personalOrderId])
+  @@map("personal_order_items")
+}
+
+model MealAggregate {
+  id            String   @id @default(cuid())
+  mealSessionId String   @unique @map("meal_session_id")
+  status        String   @default("confirmed")
+  summary       Json?
+  version       Int      @default(1)
+  confirmedBy   String?  @map("confirmed_by")
+  confirmedAt   DateTime? @map("confirmed_at")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  mealSession     MealSession      @relation(fields: [mealSessionId], references: [id], onDelete: Cascade)
+  productionTasks ProductionTask[]
+
+  @@map("meal_aggregates")
+}
+
+// ============================================================
+// 制作任务与出餐
+// ============================================================
+
+model ProductionTask {
+  id              String               @id @default(cuid())
+  mealAggregateId String               @map("meal_aggregate_id")
+  // 谁接单谁制作：未认领时为空
+  assigneeUserId  String?              @map("assignee_user_id")
+  status          ProductionTaskStatus @default(pending)
+  acceptedAt      DateTime?            @map("accepted_at")
+  startedAt       DateTime?            @map("started_at")
+  completedAt     DateTime?            @map("completed_at")
+  version         Int                  @default(1)
+  createdAt       DateTime             @default(now()) @map("created_at")
+  updatedAt       DateTime             @updatedAt @map("updated_at")
+
+  mealAggregate MealAggregate       @relation(fields: [mealAggregateId], references: [id], onDelete: Cascade)
+  assignee      User?               @relation("TaskAssignee", fields: [assigneeUserId], references: [id])
+  items         ProductionTaskItem[]
+  servingRecords ServingRecord[]
+
+  @@index([mealAggregateId, status])
+  @@index([assigneeUserId, status])
+  @@map("production_tasks")
+}
+
+model ProductionTaskItem {
+  id                    String                   @id @default(cuid())
+  productionTaskId      String                   @map("production_task_id")
+  recipeId              String                   @map("recipe_id")
+  recipeNameSnapshot    String                   @map("recipe_name_snapshot")
+  quantity              Int
+  // 口味/规格快照，用于处理"一份不辣、一份加辣"
+  specificationSnapshot Json?                    @map("specification_snapshot")
+  status                ProductionTaskItemStatus @default(pending)
+  completedAt           DateTime?                @map("completed_at")
+  completedBy           String?                  @map("completed_by")
+
+  productionTask ProductionTask         @relation(fields: [productionTaskId], references: [id], onDelete: Cascade)
+  recipe         Recipe                 @relation(fields: [recipeId], references: [id])
+  sources        ProductionTaskSource[]
+
+  @@index([productionTaskId])
+  @@map("production_task_items")
+}
+
+model ProductionTaskSource {
+  id                 String @id @default(cuid())
+  taskItemId         String @map("task_item_id")
+  personalOrderItemId String @map("personal_order_item_id")
+  quantity           Int
+
+  taskItem          ProductionTaskItem @relation(fields: [taskItemId], references: [id], onDelete: Cascade)
+  personalOrderItem PersonalOrderItem  @relation(fields: [personalOrderItemId], references: [id], onDelete: Cascade)
+
+  @@unique([taskItemId, personalOrderItemId])
+  @@map("production_task_sources")
+}
+
+model ServingRecord {
+  id               String   @id @default(cuid())
+  mealSessionId    String   @map("meal_session_id")
+  productionTaskId String?  @map("production_task_id")
+  recipeId         String   @map("recipe_id")
+  plannedQuantity  Int      @map("planned_quantity")
+  actualQuantity   Int      @map("actual_quantity")
+  servedAt         DateTime @default(now()) @map("served_at")
+  recordedBy       String   @map("recorded_by")
+  note             String?
+
+  mealSession    MealSession     @relation(fields: [mealSessionId], references: [id], onDelete: Cascade)
+  productionTask ProductionTask? @relation(fields: [productionTaskId], references: [id])
+  recipe         Recipe          @relation(fields: [recipeId], references: [id])
+  recordedByUser User            @relation("ServingRecorder", fields: [recordedBy], references: [id])
+  intakes        NutritionIntake[]
+
+  @@index([mealSessionId])
+  @@map("serving_records")
+}
+
+// ============================================================
+// 采购清单
+// ============================================================
+
+model ShoppingList {
+  id            String   @id @default(cuid())
+  householdId   String   @map("household_id")
+  mealSessionId String   @unique @map("meal_session_id")
+  generatedBy   String   @map("generated_by")
+  generatedAt   DateTime @default(now()) @map("generated_at")
+
+  household   Household          @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  mealSession MealSession        @relation(fields: [mealSessionId], references: [id], onDelete: Cascade)
+  items       ShoppingListItem[]
+
+  @@map("shopping_lists")
+}
+
+model ShoppingListItem {
+  id             String  @id @default(cuid())
+  shoppingListId String  @map("shopping_list_id")
+  ingredientName String  @map("ingredient_name")
+  quantity       String
+  unit           String
+  category       String?
+  isReady        Boolean @default(false) @map("is_ready")
+  sortOrder      Int     @default(0) @map("sort_order")
+
+  shoppingList ShoppingList @relation(fields: [shoppingListId], references: [id], onDelete: Cascade)
+
+  @@index([shoppingListId])
+  @@map("shopping_list_items")
+}
+
+// ============================================================
+// 营养摄入 / 通知 / 审计
+// ============================================================
+
+model NutritionIntake {
+  id                String @id @default(cuid())
+  servingRecordId   String @map("serving_record_id")
+  userId            String @map("user_id")
+  recipeId          String @map("recipe_id")
+  // 实际食用份额，可为 0.5 份这类小数
+  consumedQuantity  Float  @map("consumed_quantity")
+  energyKcal        Int    @map("energy_kcal")
+  proteinG          Float  @map("protein_g")
+  fatG              Float  @map("fat_g")
+  carbohydrateG     Float  @map("carbohydrate_g")
+  // 是否由点菜份数推算，而非人工修正
+  isEstimated       Boolean @default(true) @map("is_estimated")
+  createdAt         DateTime @default(now()) @map("created_at")
+
+  servingRecord ServingRecord @relation(fields: [servingRecordId], references: [id], onDelete: Cascade)
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  recipe        Recipe        @relation(fields: [recipeId], references: [id])
+
+  @@unique([servingRecordId, userId])
+  @@index([userId, createdAt])
+  @@map("nutrition_intakes")
+}
+
+model Notification {
+  id          String             @id @default(cuid())
+  householdId String             @map("household_id")
+  userId      String             @map("user_id")
+  type        String
+  payload     Json?
+  // 幂等键，防重复发送
+  dedupeKey   String?            @unique @map("dedupe_key")
+  status      NotificationStatus @default(pending)
+  readAt      DateTime?          @map("read_at")
+  sentAt      DateTime?          @map("sent_at")
+  createdAt   DateTime           @default(now()) @map("created_at")
+
+  household Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, readAt])
+  @@index([householdId, createdAt])
+  @@map("notifications")
+}
+
+model AuditLog {
+  id          String   @id @default(cuid())
+  householdId String   @map("household_id")
+  actorUserId String?  @map("actor_user_id")
+  action      String
+  targetType  String   @map("target_type")
+  targetId    String   @map("target_id")
+  reason      String?
+  detail      Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  household Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  actor     User?     @relation("AuditActor", fields: [actorUserId], references: [id])
+
+  @@index([householdId, createdAt])
+  @@index([targetType, targetId])
+  @@map("audit_logs")
+}
+
+// ============================================================
+// AI 菜谱导入
+// ============================================================
+
+enum ImportSourceType {
+  url
+  text
+  images
+}
+
+enum ImportStatus {
+  pending
+  succeeded
+  failed
+}
+
+model RecipeImport {
+  id          String           @id @default(cuid())
+  householdId String           @map("household_id")
+  userId      String           @map("user_id")
+  sourceType  ImportSourceType @map("source_type")
+  sourceUrl   String?          @map("source_url")
+  sourceTitle String?          @map("source_title")
+  inputChars  Int              @default(0) @map("input_chars")
+  imageCount  Int              @default(0) @map("image_count")
+  status      ImportStatus     @default(pending)
+  // fetch_failed / no_content / llm_timeout / llm_invalid_json / blocked_url / quota_exceeded / not_configured
+  errorCode   String?          @map("error_code")
+  draft       Json?
+  // 失败时留给前端的原文兜底（截断 4k）
+  fallbackText String?         @map("fallback_text")
+  tokenIn     Int              @default(0) @map("token_in")
+  tokenOut    Int              @default(0) @map("token_out")
+  durationMs  Int              @default(0) @map("duration_ms")
+  // 用户确认保存为菜谱后回填，用于统计 AI 导入成功率
+  recipeId    String?          @map("recipe_id")
+  createdAt   DateTime         @default(now()) @map("created_at")
+
+  household Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([householdId, createdAt])
+  @@index([userId, createdAt])
+  @@map("recipe_imports")
+}

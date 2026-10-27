@@ -1,0 +1,4 @@
+{
+  "desc": "家庭内部使用，不对外索引",
+  "rules": [{ "action": "disallow", "page": "*" }]
+}

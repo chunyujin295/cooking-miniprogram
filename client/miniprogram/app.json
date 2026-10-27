@@ -1,0 +1,41 @@
+{
+  "pages": [
+    "pages/home/index",
+    "pages/calendar/index",
+    "pages/profile/index",
+    "pages/notification/index",
+    "pages/order/index",
+    "pages/order/summary/index",
+    "pages/shopping/index",
+    "pages/recipe/index",
+    "pages/recipe/detail/index",
+    "pages/recipe/edit/index",
+    "pages/recipe/import/index",
+    "pages/production/index",
+    "pages/stats/index",
+    "pages/auth/login/index",
+    "pages/auth/household/index"
+  ],
+  "window": {
+    "navigationBarBackgroundColor": "#ffffff",
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "家庭餐桌",
+    "backgroundColor": "#ffffff"
+  },
+  "tabBar": {
+    "color": "#8b9490",
+    "selectedColor": "#2e7d5b",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "white",
+    "list": [
+      { "pagePath": "pages/home/index", "text": "首页" },
+      { "pagePath": "pages/order/index", "text": "点菜" },
+      { "pagePath": "pages/recipe/index", "text": "菜谱" },
+      { "pagePath": "pages/production/index", "text": "制作" },
+      { "pagePath": "pages/stats/index", "text": "统计" }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+}

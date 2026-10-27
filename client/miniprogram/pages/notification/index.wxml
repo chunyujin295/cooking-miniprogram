@@ -1,0 +1,21 @@
+<view class="page">
+  <view class="head">
+    <view class="title">通知</view>
+    <view class="read-all {{unread ? '' : 'disabled'}}" bindtap="onReadAll">
+      全部已读{{unread ? ' (' + unread + ')' : ''}}
+    </view>
+  </view>
+
+  <view wx:if="{{error}}" class="error">{{error}}</view>
+
+  <view wx:for="{{items}}" wx:key="id" class="card item {{item.readAt ? 'read' : ''}}" data-id="{{item.id}}" bindtap="onTapItem">
+    <view class="item-head">
+      <text class="item-title">{{item.title}}</text>
+      <text class="muted">{{item.timeText}}</text>
+    </view>
+    <view class="item-body">{{item.body}}</view>
+  </view>
+
+  <view wx:if="{{loading}}" class="muted">加载中…</view>
+  <view wx:elif="{{!items.length}}" class="placeholder">还没有通知</view>
+</view>

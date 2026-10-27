@@ -1,0 +1,42 @@
+.login {
+  min-height: 100vh;
+  padding: 0 56rpx;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.brand {
+  font-size: 46rpx;
+  font-weight: 650;
+  letter-spacing: 2rpx;
+  color: var(--color-ink);
+}
+
+.slogan {
+  margin-top: 16rpx;
+  font-size: 26rpx;
+  color: var(--color-muted);
+  text-align: center;
+}
+
+.login-btn {
+  margin-top: 80rpx;
+  width: 100%;
+}
+
+.error {
+  margin-top: 24rpx;
+  font-size: 24rpx;
+  color: #a8443c;
+}
+
+.hint {
+  margin-top: 48rpx;
+  font-size: 22rpx;
+  color: var(--color-muted);
+  text-align: center;
+  line-height: 1.7;
+}

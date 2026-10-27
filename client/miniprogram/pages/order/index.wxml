@@ -1,0 +1,159 @@
+<view class="page order-page">
+  <view class="date-bar">
+    <view
+      wx:for="{{dateOptions}}"
+      wx:key="key"
+      class="date-chip {{date === item.key ? 'on' : ''}}"
+      data-key="{{item.key}}"
+      bindtap="onDateTap"
+    >{{item.label}}</view>
+    <picker mode="date" value="{{date}}" bindchange="onDatePick">
+      <view class="date-pick">{{date}} ▾</view>
+    </picker>
+  </view>
+
+  <view class="tabs">
+    <view
+      wx:for="{{tabs}}"
+      wx:key="type"
+      class="tab {{mealType === item.type ? 'on' : ''}}"
+      data-type="{{item.type}}"
+      bindtap="onTabTap"
+    >{{item.label}}</view>
+  </view>
+
+  <view wx:if="{{error}}" class="error">{{error}}</view>
+
+  <view wx:if="{{mealType === 'snack' && !sessionId}}" class="card section">
+    <view class="section-title">今天的加餐</view>
+    <view wx:if="{{!snackSessions.length}}" class="muted">今天还没有加餐</view>
+    <view
+      wx:for="{{snackSessions}}"
+      wx:key="id"
+      class="snack-row"
+    >
+      <view class="snack-main" data-id="{{item.id}}" bindtap="onOpenSnack">
+        <text>加餐 {{index + 1}}</text>
+        <text class="muted">{{item.itemCount}} 份 · {{item.submittedCount}}/{{item.memberCount}} 已提交</text>
+      </view>
+      <view
+        wx:if="{{!item.submittedCount && (item.status === 'not_started' || item.status === 'ordering')}}"
+        class="snack-del"
+        data-id="{{item.id}}"
+        catchtap="onDeleteSnack"
+      >×</view>
+    </view>
+    <view class="mini-btn" bindtap="onAddSnack">＋ 新增加餐</view>
+  </view>
+
+  <block wx:if="{{sessionId && detail}}">
+    <view wx:if="{{mealType === 'snack'}}" class="back-row" bindtap="onBackToSnacks">‹ 返回加餐列表</view>
+
+    <view class="status-line">
+      <text class="tag">{{statusLabel}}</text>
+      <text wx:if="{{detail.myOrder}}" class="muted">
+        我的点菜：{{dirty ? '有改动未提交' : '已提交'}}
+      </text>
+    </view>
+
+    <view wx:if="{{!detail.canEdit}}" class="notice">这餐已确认，点菜单只读</view>
+
+    <view class="search-row">
+      <input
+        class="search"
+        placeholder="搜索菜名"
+        value="{{keyword}}"
+        bindinput="onKeywordInput"
+      />
+    </view>
+
+    <scroll-view class="tag-bar" scroll-x wx:if="{{tags.length}}">
+      <view
+        wx:for="{{tags}}"
+        wx:key="id"
+        class="tag-chip {{item.selected ? 'on' : ''}}"
+        data-id="{{item.id}}"
+        bindtap="onToggleTag"
+      >{{item.name}}</view>
+    </scroll-view>
+
+    <scroll-view class="dish-grid" scroll-y enhanced show-scrollbar>
+      <view class="grid">
+        <view wx:for="{{recipes}}" wx:key="id" class="grid-card">
+          <view class="grid-cover-wrap">
+            <image wx:if="{{item.cover}}" class="grid-cover" src="{{item.cover}}" mode="aspectFill" />
+            <view wx:else class="grid-cover grid-cover-empty">无图</view>
+            <view wx:if="{{allergenMap[item.id]}}" class="allergen-badge">忌</view>
+            <view wx:if="{{detail.canEdit}}" class="grid-overlay">
+              <view
+                wx:if="{{qtyMap[item.id]}}"
+                class="ov-btn"
+                data-id="{{item.id}}"
+                catchtap="onDishRemove"
+              >−</view>
+              <text wx:if="{{qtyMap[item.id]}}" class="ov-qty">{{qtyMap[item.id]}}</text>
+              <view class="ov-btn plus" data-id="{{item.id}}" catchtap="onDishAdd">＋</view>
+            </view>
+          </view>
+          <view class="grid-name">{{item.name}}</view>
+          <view class="grid-meta">{{item.totalMinutes}} 分钟</view>
+        </view>
+      </view>
+      <view wx:if="{{!recipes.length}}" class="placeholder">没有符合条件的菜谱</view>
+    </scroll-view>
+
+    <view wx:if="{{picked.length}}" class="card section">
+      <view class="section-title">已选 {{picked.length}} 道</view>
+      <view wx:for="{{picked}}" wx:key="recipeId" class="pick-row">
+        <view class="pick-top">
+          <text class="pick-name">{{item.name}}</text>
+          <view wx:if="{{detail.canEdit}}" class="pick-stepper">
+            <view class="p-btn" data-index="{{index}}" catchtap="onPickMinus">−</view>
+            <text class="p-qty">{{item.quantity}}</text>
+            <view class="p-btn plus" data-index="{{index}}" catchtap="onPickPlus">＋</view>
+          </view>
+          <text wx:else class="p-qty">×{{item.quantity}}</text>
+        </view>
+        <view class="pick-bottom">
+          <input
+            wx:if="{{detail.canEdit}}"
+            class="pick-note"
+            placeholder="这道菜的口味/做法备注"
+            value="{{item.note}}"
+            data-index="{{index}}"
+            bindinput="onPickNote"
+          />
+          <text wx:else class="pick-note-text">{{item.note || '无备注'}}</text>
+          <view wx:if="{{detail.canEdit}}" class="del" data-index="{{index}}" catchtap="onPickRemove">×</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="card section">
+      <view class="section-title">整餐备注</view>
+      <textarea
+        class="textarea"
+        value="{{note}}"
+        bindinput="onNoteInput"
+        placeholder="例如 少油、不要香菜"
+        maxlength="200"
+        disabled="{{!detail.canEdit}}"
+      />
+    </view>
+
+    <view class="count-line">{{picked.length}} 道 / {{totalQty}} 份</view>
+
+    <view class="action-bar">
+      <button
+        wx:if="{{detail.canEdit}}"
+        class="btn-primary submit-btn"
+        loading="{{saving}}"
+        disabled="{{!dirty || saving}}"
+        bindtap="onSubmit"
+      >{{dirty || !detail.myOrder ? '提交' : '已提交'}}</button>
+      <button class="btn-ghost summary-btn" bindtap="onOpenSummary">汇总</button>
+    </view>
+  </block>
+
+  <view wx:if="{{loading}}" class="muted">加载中…</view>
+</view>

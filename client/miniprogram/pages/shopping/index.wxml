@@ -1,0 +1,29 @@
+<view class="page">
+  <view wx:if="{{view}}" class="head">
+    <view class="title">{{view.label}} · {{view.mealDate}}</view>
+    <view class="muted">已备 {{readyCount}} / {{view.items.length}}</view>
+  </view>
+
+  <view wx:if="{{error}}" class="error">{{error}}</view>
+
+  <view wx:if="{{view && view.items.length}}" class="card list">
+    <view
+      wx:for="{{view.items}}"
+      wx:key="id"
+      class="row {{item.isReady ? 'ready' : ''}}"
+      data-id="{{item.id}}"
+      bindtap="onToggle"
+    >
+      <view class="check {{item.isReady ? 'on' : ''}}">{{item.isReady ? '✓' : ''}}</view>
+      <view class="name">{{item.ingredientName}}</view>
+      <view class="qty">{{item.quantity}}{{item.unit}}</view>
+    </view>
+  </view>
+
+  <view wx:if="{{view && !view.items.length}}" class="placeholder">
+    这餐还没有已提交的点菜，确认菜单后再来看采购清单
+  </view>
+
+  <view wx:if="{{loading}}" class="muted">加载中…</view>
+  <view wx:if="{{view}}" class="muted tip">用量按「点菜份数 ÷ 菜谱基准份数」换算后合并，仅供采买参考</view>
+</view>

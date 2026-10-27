@@ -1,0 +1,148 @@
+.month-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 32rpx;
+  margin-bottom: 16rpx;
+}
+
+.arrow {
+  width: 64rpx;
+  height: 64rpx;
+  line-height: 60rpx;
+  text-align: center;
+  border-radius: 50%;
+  border: 1rpx solid var(--color-line);
+  color: var(--color-ink-2);
+  font-size: 34rpx;
+}
+
+.month {
+  font-size: 30rpx;
+  font-weight: 600;
+}
+
+.week-row {
+  display: flex;
+  margin-bottom: 8rpx;
+}
+
+.week-cell {
+  width: 14.28%;
+  text-align: center;
+  font-size: 22rpx;
+  color: var(--color-muted);
+}
+
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 16rpx;
+}
+
+.cell {
+  width: 14.28%;
+  height: 96rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12rpx;
+  font-size: 26rpx;
+}
+
+.cell.blank {
+  visibility: hidden;
+}
+
+.cell.today .day {
+  color: var(--color-accent);
+  font-weight: 600;
+}
+
+.cell.on {
+  background: var(--color-accent-weak);
+}
+
+.dots {
+  display: flex;
+  gap: 4rpx;
+  margin-top: 6rpx;
+  height: 10rpx;
+}
+
+.dot {
+  width: 8rpx;
+  height: 8rpx;
+  border-radius: 50%;
+  background: #cfd6d1;
+}
+
+.dot.served {
+  background: var(--color-accent);
+}
+
+.dot.ordered {
+  background: #7fae97;
+}
+
+.section {
+  margin-bottom: 12rpx;
+}
+
+.section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8rpx;
+}
+
+.section-title {
+  font-size: 28rpx;
+  font-weight: 600;
+}
+
+.link {
+  font-size: 24rpx;
+  color: var(--color-accent);
+}
+
+.session-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14rpx 0;
+  border-top: 1rpx solid var(--color-line);
+  font-size: 26rpx;
+}
+
+.chip {
+  padding: 2rpx 16rpx;
+  border-radius: 8rpx;
+  background: var(--color-surface-2);
+  color: var(--color-muted);
+  font-size: 22rpx;
+}
+
+.chip.on {
+  background: var(--color-accent-weak);
+  color: var(--color-accent);
+}
+
+.legend {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  margin-bottom: 24rpx;
+  font-size: 22rpx;
+}
+
+.legend .dot {
+  margin-left: 8rpx;
+}
+
+.error {
+  color: #a33;
+  font-size: 24rpx;
+  margin-bottom: 12rpx;
+}

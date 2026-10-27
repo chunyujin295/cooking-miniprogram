@@ -1,0 +1,11 @@
+<view class="login">
+  <view class="brand">家庭餐桌</view>
+  <view class="slogan">三个人，一顿饭，不用再问「吃什么」</view>
+
+  <button class="btn-primary login-btn" bindtap="onLogin" loading="{{loading}}" disabled="{{loading}}">
+    微信一键登录
+  </button>
+
+  <view wx:if="{{error}}" class="error">{{error}}</view>
+  <view class="hint">登录后可创建家庭，或用邀请码加入家人的家庭</view>
+</view>

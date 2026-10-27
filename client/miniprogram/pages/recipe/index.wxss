@@ -1,0 +1,125 @@
+.head {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  margin-bottom: 20rpx;
+}
+
+.search {
+  flex: 1;
+  height: 72rpx;
+  padding: 0 24rpx;
+  border: 1rpx solid var(--color-line);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  font-size: 26rpx;
+}
+
+.import-btn {
+  height: 68rpx;
+  line-height: 64rpx;
+  padding: 0 24rpx;
+  border: 1rpx solid var(--color-line-strong);
+  border-radius: var(--radius-pill);
+  background: var(--color-bar);
+  color: var(--color-ink-2);
+  font-size: 24rpx;
+  flex-shrink: 0;
+}
+
+.add-btn {
+  width: 72rpx;
+  height: 72rpx;
+  line-height: 68rpx;
+  text-align: center;
+  border-radius: 50%;
+  background: var(--color-accent);
+  color: #ffffff;
+  font-size: 40rpx;
+}
+
+.tag-bar {
+  white-space: nowrap;
+  margin-bottom: 20rpx;
+}
+
+.tag-chip {
+  display: inline-block;
+  padding: 8rpx 22rpx;
+  margin-right: 12rpx;
+  border: 1rpx solid var(--color-line);
+  border-radius: var(--radius-pill);
+  font-size: 24rpx;
+  color: var(--color-ink-2);
+}
+
+.tag-chip.on {
+  border-color: var(--color-accent);
+  background: var(--color-accent-weak);
+  color: var(--color-accent);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.recipe-card {
+  display: flex;
+  gap: 20rpx;
+  padding: 16rpx;
+}
+
+.cover {
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 14rpx;
+  background: var(--color-surface-2);
+  flex-shrink: 0;
+}
+
+.cover-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-muted);
+  font-size: 22rpx;
+}
+
+.body {
+  flex: 1;
+  min-width: 0;
+}
+
+.name {
+  font-size: 30rpx;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.meta {
+  margin-top: 6rpx;
+  color: var(--color-muted);
+  font-size: 24rpx;
+}
+
+.archived {
+  margin-left: 12rpx;
+  color: var(--color-amber);
+}
+
+.tags {
+  margin-top: 12rpx;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8rpx;
+}
+
+.error {
+  margin-bottom: 16rpx;
+  color: #a33;
+  font-size: 24rpx;
+}

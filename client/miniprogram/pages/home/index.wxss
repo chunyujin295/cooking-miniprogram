@@ -1,0 +1,168 @@
+.me-row {
+  display: flex;
+  align-items: center;
+  gap: 14rpx;
+  margin-top: 16rpx;
+  padding: 14rpx 18rpx;
+  border: 1rpx solid var(--color-line);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+}
+
+.me-avatar {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 50%;
+  background: var(--color-surface-2);
+  flex-shrink: 0;
+}
+
+.me-avatar-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-accent-weak);
+  color: var(--color-accent);
+  font-size: 24rpx;
+}
+
+.me-name {
+  flex: 1;
+  font-size: 27rpx;
+}
+
+.me-link {
+  font-size: 24rpx;
+  color: var(--color-accent);
+}
+
+.notice-link {
+  display: flex;
+  align-items: center;
+  gap: 6rpx;
+  margin-left: 16rpx;
+  font-size: 24rpx;
+  color: var(--color-ink-2);
+  border-left: 1rpx solid var(--color-line);
+  padding-left: 16rpx;
+}
+
+.badge {
+  min-width: 32rpx;
+  padding: 0 8rpx;
+  border-radius: 16rpx;
+  background: #c0503f;
+  color: #ffffff;
+  font-size: 20rpx;
+  text-align: center;
+  line-height: 32rpx;
+}
+
+.member-card {
+  margin-top: 24rpx;
+}
+
+.meal-card {
+  margin-top: 16rpx;
+}
+
+.meal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8rpx;
+}
+
+.meal-title {
+  font-size: 28rpx;
+  font-weight: 600;
+}
+
+.nav-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 16rpx;
+}
+
+.nav-main {
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+
+.nav-title {
+  font-size: 28rpx;
+  font-weight: 600;
+}
+
+.nav-arrow {
+  font-size: 34rpx;
+  color: var(--color-muted);
+}
+
+.meal-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 12rpx 0;
+  border-bottom: 1rpx solid var(--color-line);
+  font-size: 26rpx;
+}
+
+.meal-row:last-child {
+  border-bottom: none;
+}
+
+.member {
+  display: flex;
+  align-items: center;
+  padding: 16rpx 0;
+  border-bottom: 1rpx solid var(--color-line);
+}
+
+.member:last-child {
+  border-bottom: none;
+}
+
+.avatar {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 50%;
+  background: var(--color-accent-weak);
+  color: var(--color-accent);
+  font-size: 26rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 20rpx;
+}
+
+.member-name {
+  flex: 1;
+  font-size: 28rpx;
+}
+
+.member-role {
+  font-size: 22rpx;
+  color: var(--color-muted);
+}
+
+.invite-btn {
+  margin-top: 32rpx;
+}
+
+.invite {
+  margin-top: 20rpx;
+  padding: 20rpx;
+  border-radius: 16rpx;
+  background: var(--color-accent-weak);
+  color: var(--color-accent);
+  font-size: 26rpx;
+  text-align: center;
+}
+
+.error {
+  margin-top: 24rpx;
+  font-size: 24rpx;
+  color: #a8443c;
+}

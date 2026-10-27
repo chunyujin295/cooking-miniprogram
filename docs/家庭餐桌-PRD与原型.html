@@ -1,0 +1,1468 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>家庭餐桌 · 微信小程序 PRD 1.1 与 UI 原型</title>
+<style>
+:root{
+  --bg:#ffffff;
+  --surface:#f7f8f7;
+  --surface-2:#f2f4f2;
+  --line:#e9ece9;
+  --line-2:#dfe3df;
+  --ink:#1d211e;
+  --ink-2:#4e564f;
+  --muted:#8b9490;
+  --accent:#2e7d5b;
+  --accent-weak:#eaf4ef;
+  --accent-line:#cfe4d8;
+  --amber:#9a6b13;
+  --amber-weak:#fdf5e4;
+  --blue:#365d8a;
+  --blue-weak:#eef3f8;
+  --red:#a8443c;
+  --red-weak:#fbeeee;
+  --r-s:6px; --r-m:10px; --r-l:14px;
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
+  font-size:14.5px;line-height:1.72;-webkit-font-smoothing:antialiased;
+}
+.layout{display:flex;max-width:1320px;margin:0 auto;gap:40px;padding:0 28px;}
+nav.toc{width:216px;flex:none;position:sticky;top:28px;align-self:flex-start;max-height:calc(100vh - 56px);overflow:auto;padding:6px 0 30px;}
+nav.toc .tt{font-size:11px;letter-spacing:.16em;color:var(--muted);margin:0 0 12px 10px;}
+nav.toc a{display:block;padding:5px 10px;border-radius:var(--r-s);color:var(--ink-2);text-decoration:none;font-size:13px;line-height:1.5;}
+nav.toc a:hover{background:var(--accent-weak);color:var(--accent);}
+nav.toc a.sub{padding-left:22px;font-size:12.3px;color:var(--muted);}
+main{flex:1;min-width:0;padding:44px 0 90px;}
+@media(max-width:1000px){nav.toc{display:none}.layout{padding:0 18px}}
+
+header.doc{padding:0 0 26px;border-bottom:1px solid var(--line);margin-bottom:34px;}
+header.doc .eyebrow{font-size:11.5px;letter-spacing:.14em;color:var(--accent);text-transform:uppercase;margin-bottom:12px;}
+header.doc h1{margin:0 0 12px;font-size:27px;line-height:1.35;letter-spacing:-.01em;font-weight:650;}
+header.doc p.lead{margin:0 0 20px;font-size:15px;color:var(--ink-2);max-width:700px;}
+header.doc .meta{display:flex;flex-wrap:wrap;gap:22px;font-size:12.5px;color:var(--muted);}
+header.doc .meta b{color:var(--ink-2);font-weight:550;}
+
+section{margin-bottom:54px;scroll-margin-top:24px;}
+h2{font-size:19.5px;margin:0 0 4px;font-weight:650;letter-spacing:-.01em;display:flex;align-items:baseline;gap:10px;}
+h2 .num{font-size:12px;color:var(--accent);font-variant-numeric:tabular-nums;font-weight:600;}
+.sec-note{color:var(--muted);margin:0 0 22px;font-size:12.8px;}
+h3{font-size:15.5px;margin:32px 0 10px;font-weight:620;}
+h4{font-size:13.8px;margin:22px 0 8px;color:var(--ink-2);font-weight:600;}
+p{margin:11px 0;}
+ul,ol{margin:11px 0;padding-left:20px;}
+li{margin:5px 0;}
+strong{font-weight:620;}
+a{color:var(--accent);}
+
+table{width:100%;border-collapse:collapse;font-size:13.2px;margin:16px 0;}
+th,td{border-bottom:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top;}
+th{font-weight:600;color:var(--ink-2);background:var(--surface);font-size:12.5px;white-space:nowrap;border-top:1px solid var(--line);}
+td code{background:var(--surface-2);padding:1px 5px;border-radius:4px;font-size:12.2px;font-family:ui-monospace,Consolas,monospace;color:var(--ink-2);}
+tr:last-child td{border-bottom:1px solid var(--line);}
+
+.tag{display:inline-block;font-size:11.5px;padding:1px 8px;border-radius:4px;background:var(--accent-weak);color:var(--accent);margin-right:5px;white-space:nowrap;}
+.tag.gray{background:var(--surface-2);color:var(--muted);}
+.tag.amber{background:var(--amber-weak);color:var(--amber);}
+.tag.blue{background:var(--blue-weak);color:var(--blue);}
+.p0{color:var(--accent);font-weight:600;}
+.tbd{background:var(--amber-weak);color:var(--amber);border-radius:4px;padding:1px 7px;font-size:11.5px;white-space:nowrap;}
+
+.note{background:var(--surface);border-radius:var(--r-m);padding:14px 16px;margin:16px 0;font-size:13.2px;color:var(--ink-2);}
+.note .nt{font-weight:600;color:var(--ink);margin-bottom:4px;font-size:13px;}
+.note.warn{background:var(--amber-weak);}
+
+.chain{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin:18px 0;font-size:12.8px;}
+.chain .n{border:1px solid var(--line-2);border-radius:var(--r-s);padding:6px 11px;background:#fff;color:var(--ink-2);}
+.chain .n.k{background:var(--accent-weak);border-color:var(--accent-line);color:var(--accent);font-weight:600;}
+.chain .a{color:var(--line-2);}
+
+.topo{margin:20px 0;}
+.topo .tier{display:flex;gap:10px;}
+.topo .box{flex:1;border:1px solid var(--line-2);border-radius:var(--r-m);padding:9px 13px;background:#fff;}
+.topo .box b{display:block;font-size:12.6px;font-weight:620;color:var(--ink);margin-bottom:2px;}
+.topo .box span{font-size:11.5px;color:var(--muted);line-height:1.5;}
+.topo .box.hl{background:var(--accent-weak);border-color:var(--accent-line);}
+.topo .link{margin-left:20px;padding:6px 0;font-size:11.3px;color:var(--muted);}
+.topo .link::before{content:"↓ ";color:var(--line-2);}
+
+/* ============ 设计规范色板 ============ */
+.swatches{display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:10px;margin:16px 0;}
+.sw{border:1px solid var(--line);border-radius:var(--r-m);overflow:hidden;}
+.sw .cbox{height:46px;}
+.sw .info{padding:7px 10px;font-size:11.5px;color:var(--muted);line-height:1.45;}
+.sw .info b{display:block;color:var(--ink-2);font-size:12.3px;font-weight:600;}
+
+/* ============ 手机原型 ============ */
+.screens{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:26px;margin:22px 0 10px;}
+.screen{display:flex;flex-direction:column;align-items:center;gap:9px;}
+.phone{
+  width:100%;max-width:326px;background:#fff;border:1px solid var(--line-2);
+  border-radius:26px;overflow:hidden;box-shadow:0 2px 14px rgba(20,30,25,.055);
+  display:flex;flex-direction:column;font-size:12px;line-height:1.55;
+}
+.p-status{display:flex;justify-content:space-between;padding:7px 15px 3px;font-size:10px;color:var(--ink-2);font-weight:600;}
+.p-status .icons{letter-spacing:2px;font-size:9px;color:var(--ink-2);}
+.p-nav{padding:5px 15px 9px;font-size:13px;font-weight:650;text-align:center;color:var(--ink);}
+.p-nav.left{text-align:left;display:flex;align-items:center;justify-content:space-between;}
+.p-nav .r{font-size:11px;color:var(--muted);font-weight:400;}
+.p-body{flex:1;padding:0 12px 10px;display:flex;flex-direction:column;gap:9px;min-height:520px;background:#fff;}
+.p-tab{display:flex;border-top:1px solid var(--line);padding:6px 0 7px;background:#fff;}
+.p-tab .t{flex:1;text-align:center;font-size:9.5px;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:2px;}
+.p-tab .t.on{color:var(--accent);font-weight:600;}
+.p-tab svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;}
+.cap{font-size:11.8px;color:var(--muted);text-align:center;}
+.cap b{color:var(--ink-2);font-weight:600;}
+
+/* 原型内部组件 */
+.bar-date{display:flex;justify-content:space-between;align-items:center;font-size:10.5px;color:var(--muted);}
+.h-sec{font-size:11px;color:var(--muted);font-weight:600;letter-spacing:.02em;margin-top:2px;}
+.card{border:1px solid var(--line);border-radius:var(--r-m);padding:10px 11px;background:#fff;}
+.card.flat{background:var(--surface);border-color:transparent;}
+.row{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.row.top{align-items:flex-start;}
+.stack{display:flex;flex-direction:column;gap:7px;}
+.stack.tight{gap:4px;}
+.meal{border:1px solid var(--line);border-radius:var(--r-m);padding:9px 11px;display:flex;justify-content:space-between;align-items:center;}
+.meal .l{display:flex;flex-direction:column;gap:2px;}
+.meal .l .n{font-weight:620;font-size:12px;}
+.meal .l .s{font-size:10px;color:var(--muted);}
+.meal .act{font-size:10.5px;color:var(--accent);font-weight:600;}
+.badge{font-size:9.5px;padding:1px 7px;border-radius:20px;font-weight:600;white-space:nowrap;}
+.badge.done{background:var(--accent-weak);color:var(--accent);}
+.badge.doing{background:var(--amber-weak);color:var(--amber);}
+.badge.wait{background:var(--surface-2);color:var(--muted);}
+.badge.serve{background:var(--blue-weak);color:var(--blue);}
+
+.chips{display:flex;gap:5px;flex-wrap:wrap;}
+.chip{border:1px solid var(--line-2);border-radius:20px;padding:3px 9px;font-size:10px;color:var(--ink-2);background:#fff;white-space:nowrap;}
+.chip.on{background:var(--accent);border-color:var(--accent);color:#fff;}
+
+.dishline{display:flex;gap:9px;align-items:center;border:1px solid var(--line);border-radius:var(--r-m);padding:7px;background:#fff;}
+.dishline img{width:52px;height:52px;object-fit:cover;border-radius:7px;display:block;flex:none;background:var(--surface-2);}
+.dishline .dt{flex:1;min-width:0;}
+.dishline .dt .n{font-size:11.8px;font-weight:620;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.dishline .dt .m{font-size:9.8px;color:var(--muted);margin-top:1px;}
+.stepper{display:flex;align-items:center;gap:0;border:1px solid var(--line-2);border-radius:20px;overflow:hidden;flex:none;}
+.stepper .b{width:20px;height:20px;line-height:18px;text-align:center;font-size:12px;color:var(--ink-2);background:#fff;}
+.stepper .v{min-width:17px;text-align:center;font-size:10.5px;font-weight:600;color:var(--ink);}
+.stepper .v.zero{color:var(--muted);}
+
+.actionbar{margin-top:auto;border-top:1px solid var(--line);padding-top:8px;display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.actionbar .sum{font-size:10.2px;color:var(--muted);line-height:1.4;}
+.actionbar .sum b{color:var(--ink);font-size:11.5px;}
+.btn{background:var(--accent);color:#fff;border-radius:20px;padding:7px 15px;font-size:11px;font-weight:600;white-space:nowrap;}
+.btn.sm{padding:4px 11px;font-size:10px;}
+.btn.line{background:#fff;color:var(--ink-2);border:1px solid var(--line-2);}
+.btn.off{background:var(--surface-2);color:var(--muted);}
+
+.prog{height:4px;border-radius:4px;background:var(--surface-2);overflow:hidden;}
+.prog i{display:block;height:100%;background:var(--accent);border-radius:4px;}
+
+.member{display:flex;align-items:center;gap:6px;font-size:10.2px;color:var(--ink-2);}
+.ava{width:15px;height:15px;border-radius:50%;background:var(--accent-weak);color:var(--accent);font-size:8px;display:flex;align-items:center;justify-content:center;font-weight:600;flex:none;}
+.ava.b{background:var(--blue-weak);color:var(--blue);}
+.ava.a{background:var(--amber-weak);color:var(--amber);}
+
+.tickline{display:flex;align-items:center;gap:7px;padding:6px 0;border-bottom:1px solid var(--line);font-size:11px;}
+.tickline:last-child{border-bottom:none;}
+.tick{width:15px;height:15px;border-radius:50%;border:1.4px solid var(--line-2);flex:none;display:flex;align-items:center;justify-content:center;font-size:9px;color:#fff;}
+.tick.ok{background:var(--accent);border-color:var(--accent);}
+.tickline .nm{flex:1;}
+.tickline .qt{font-size:9.8px;color:var(--muted);}
+
+.pimg{width:100%;height:104px;object-fit:cover;border-radius:var(--r-m);display:block;background:var(--surface-2);}
+.nut{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;}
+.nut .n{background:var(--surface);border-radius:var(--r-s);padding:6px 4px;text-align:center;}
+.nut .n b{display:block;font-size:12px;color:var(--ink);font-weight:650;}
+.nut .n span{font-size:8.6px;color:var(--muted);}
+.mini-t{font-size:9.8px;color:var(--muted);margin-bottom:3px;}
+.steplist{font-size:10.5px;color:var(--ink-2);line-height:1.65;padding-left:14px;margin:2px 0;}
+
+.brow{display:grid;grid-template-columns:52px 1fr 30px;align-items:center;gap:6px;font-size:10px;color:var(--ink-2);margin:4px 0;}
+.brow .tr{height:7px;background:var(--surface-2);border-radius:4px;overflow:hidden;}
+.brow .tr i{display:block;height:100%;background:var(--accent);border-radius:4px;opacity:.85;}
+.brow .vv{text-align:right;color:var(--muted);font-size:9px;}
+
+.seg{display:flex;background:var(--surface-2);border-radius:20px;padding:2px;}
+.seg .s{flex:1;text-align:center;font-size:10px;padding:3px 0;border-radius:18px;color:var(--muted);}
+.seg .s.on{background:#fff;color:var(--ink);font-weight:600;box-shadow:0 1px 2px rgba(0,0,0,.06);}
+
+.weekgrid{display:grid;grid-template-columns:26px repeat(7,1fr);gap:2px;font-size:7.4px;text-align:center;}
+.weekgrid .h{color:var(--muted);padding-bottom:1px;}
+.weekgrid .rl{color:var(--muted);display:flex;align-items:center;justify-content:flex-end;padding-right:2px;font-size:7.2px;}
+.weekgrid .c{background:var(--surface);border-radius:3px;padding:3px 1px;color:var(--ink-2);line-height:1.35;}
+
+/* 交互说明 */
+.specs{border:1px solid var(--line);border-radius:var(--r-m);padding:4px 16px 12px;margin:16px 0;}
+.specs h4{margin:14px 0 4px;}
+.specs ul{margin:4px 0 8px;font-size:13px;}
+
+footer.doc{margin-top:34px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font-size:12.3px;}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="toc">
+  <p class="tt">目录</p>
+  <a href="#s1">1 产品概述</a>
+  <a href="#s2">2 业务流程与对象模型</a>
+  <a href="#s3">3 角色与权限</a>
+  <a href="#s4">4 功能需求与验收</a>
+  <a class="sub" href="#s4-1">家庭与成员</a>
+  <a class="sub" href="#s4-2">日历与餐次</a>
+  <a class="sub" href="#s4-3">个人点菜</a>
+  <a class="sub" href="#s4-4">汇总与制作</a>
+  <a class="sub" href="#s4-5">菜谱</a>
+  <a class="sub" href="#s4-6">统计与营养</a>
+  <a class="sub" href="#s4-7">通知与随机</a>
+  <a class="sub" href="#s4-8">食材采购清单</a>
+  <a href="#s5">5 页面清单与导航</a>
+  <a href="#s6">6 UI 原型</a>
+  <a class="sub" href="#s6-0">设计规范</a>
+  <a class="sub" href="#s6-1">九屏原型</a>
+  <a href="#s7">7 页面交互要求</a>
+  <a href="#s8">8 业务规则与状态机</a>
+  <a href="#s9">9 数据模型</a>
+  <a href="#s10">10 共享规则</a>
+  <a href="#s11">11 部署与运维</a>
+  <a href="#s12">12 交付阶段</a>
+  <a href="#s13">13 待确认事项</a>
+</nav>
+
+<main>
+<header class="doc">
+  <div class="eyebrow">Product Requirements Document · v1.1</div>
+  <h1>家庭餐桌 · 家庭点菜微信小程序</h1>
+  <p class="lead">三人家庭的私有饮食协作工具。与上一稿最大的差别在于产品模型变了：这不是"一个人向厨师下单"，而是<strong>每位成员独立点菜、汇总成制作任务、谁接单谁制作、逐道菜记录完成、厨师统一确认出餐</strong>的协作系统。</p>
+  <div class="meta">
+    <span>形态 <b>微信小程序</b></span>
+    <span>成员 <b>3 人（家庭共享数据）</b></span>
+    <span>数据范围 <b>仅家庭内部</b></span>
+    <span>核心对象 <b>餐次 · 个人点菜单 · 制作任务</b></span>
+  </div>
+</header>
+
+<!-- ============ 1 ============ -->
+<section id="s1">
+  <h2><span class="num">01</span>产品概述</h2>
+  <p class="sec-note">已确认的产品决策在本版全部回填，不再以假设方式推进。</p>
+
+  <h3>1.1 定位</h3>
+  <p>面向固定三人家庭的私有饮食协作平台，以微信小程序为入口，覆盖饮食规划、个人点菜、接单制作、出餐确认、菜谱积累、饮食统计与营养分析。</p>
+
+  <h3>1.2 已确认决策</h3>
+  <table>
+    <tr><th>决策项</th><th>确认结果</th><th>对设计的影响</th></tr>
+    <tr><td>使用平台</td><td>微信小程序</td><td>微信登录作为身份来源，微信订阅消息作为通知通道</td></tr>
+    <tr><td>账号模式</td><td>家庭共享数据，区分成员身份</td><td>数据以家庭为边界；"我"与"他人"必须可区分，权限校验在后端</td></tr>
+    <tr><td>点菜方式</td><td>每人独立点菜，厨师汇总制作</td><td>个人点菜单是独立对象，不能与汇总单合并成一张表</td></tr>
+    <tr><td>厨师安排</td><td>谁接单谁制作</td><td>不设固定厨师角色，改为"制作成员"按任务认领</td></tr>
+    <tr><td>通知方式</td><td>微信通知优先</td><td>站内通知为兜底基础通道，订阅消息为增强通道</td></tr>
+    <tr><td>菜谱录入</td><td>手动录入，预留图片/文档 AI 导入</td><td>菜谱表预留版本与导入任务结构，第一版不实现解析</td></tr>
+    <tr><td>点菜截止</td><td>成员手动确认汇总并开始制作</td><td>不做定时截止任务，避免时区与超时状态复杂度</td></tr>
+    <tr><td>份数含义</td><td>默认每人点自己的份数，可标记多人共享</td><td>份数 ≠ 食用人数 ≠ 实际摄入量，三者分开记录</td></tr>
+    <tr><td>出餐确认</td><td>厨师确认出餐，允许逐道菜记录完成</td><td>菜品状态与整餐状态分离，两层状态机</td></tr>
+    <tr><td>营养录入</td><td>第一版接入 AI 估算 + 人工确认</td><td>营养估算有独立状态：待估算 → 待确认 → 已确认</td></tr>
+    <tr><td>存储方式</td><td>先设计可替换架构</td><td>业务接口稳定，底层存储与三方服务通过适配层隔离</td></tr>
+    <tr><td>确认菜单权限</td><td><strong>仅家庭创建者</strong>可点「确认并开始制作」</td><td>确认是唯一的"锁定点菜、生成任务"入口，权限收敛到一人</td></tr>
+    <tr><td>追加菜品</td><td>确认后<strong>不开放追加</strong></td><td>想补菜走「加餐」，不做追加窗口与变更流程</td></tr>
+    <tr><td>加餐次数</td><td><strong>不限次数</strong>，一天可多个加餐</td><td>餐次唯一约束不能只按 日期+餐次类型，需引入序号</td></tr>
+    <tr><td>成员在家状态</td><td><strong>不做</strong></td><td>不维护"是否回家吃饭"，提交进度只反映点菜动作</td></tr>
+    <tr><td>期望用餐时间</td><td><strong>不做</strong></td><td>不设置开饭时间点，厨师按接单顺序处理</td></tr>
+    <tr><td>忌口与过敏</td><td>作为成员档案结构化维护</td><td>点菜时对命中过敏原的菜提示，制作时高亮</td></tr>
+    <tr><td>食材采购清单</td><td>由餐次汇总自动生成</td><td>按总份数换算食材用量并按食材合并</td></tr>
+    <tr><td>菜谱归档</td><td>归档后不进入点菜候选与随机抽菜，可恢复</td><td>支持「不再常做」与「时令菜过季」两种场景</td></tr>
+    <tr><td>成员退出</td><td>历史点菜与出餐记录<strong>保留在家庭</strong></td><td>不随成员退出而删除或匿名化</td></tr>
+  </table>
+
+  <h3>1.3 目标与边界</h3>
+  <table>
+    <tr><th>目标</th><th>衡量方式</th></tr>
+    <tr><td>降低选菜成本</td><td>支持搜索、标签筛选、随机推荐，从打开到提交点菜单不超过一次连续操作</td></tr>
+    <tr><td>提高协作效率</td><td>多人点菜后可在汇总页看到合计份数与每个人需求</td></tr>
+    <tr><td>沉淀家庭菜谱资产</td><td>菜谱可创建、修改、归档，历史订单引用不受删除影响</td></tr>
+    <tr><td>保证过程可追踪</td><td>从个人提交到实际出餐每一步都有状态、责任人与时间</td></tr>
+    <tr><td>了解饮食规律</td><td>可查看历史菜单、热门菜、餐次分布与营养趋势</td></tr>
+  </table>
+  <p><strong>不做：</strong>公开菜谱社区、外卖与支付、商家管理、库存采购、多人跨家庭共享。第一版一个微信用户只加入一个家庭。</p>
+</section>
+
+<!-- ============ 2 ============ -->
+<section id="s2">
+  <h2><span class="num">02</span>业务流程与对象模型</h2>
+  <p class="sec-note">先说清楚"哪些东西是不同的东西"，这是本产品最容易设计错的地方。</p>
+
+  <h3>2.1 主流程</h3>
+  <div class="chain">
+    <span class="n">创建家庭 / 邀请成员</span><span class="a">→</span>
+    <span class="n">维护菜谱</span><span class="a">→</span>
+    <span class="n">各成员选日期餐次</span><span class="a">→</span>
+    <span class="n k">提交个人点菜单</span><span class="a">→</span>
+    <span class="n k">汇总为制作任务</span><span class="a">→</span>
+    <span class="n k">接单制作</span><span class="a">→</span>
+    <span class="n k">逐菜完成</span><span class="a">→</span>
+    <span class="n k">确认出餐</span><span class="a">→</span>
+    <span class="n">归档与统计</span>
+  </div>
+
+  <h3>2.2 四个不能合并的对象</h3>
+  <table>
+    <tr><th>对象</th><th>定义</th><th>为什么不能合并</th></tr>
+    <tr><td><strong>家庭</strong></td><td>成员、菜谱、餐次、任务、通知、统计的共享边界</td><td>是所有数据的隔离单位，权限与统计都挂在它上面</td></tr>
+    <tr><td><strong>餐次</strong></td><td>某一天的早 / 中 / 晚 / 加餐</td><td>是时间容器；把"订单"当中心对象会让多餐多任务无处归属</td></tr>
+    <tr><td><strong>个人点菜单</strong></td><td>每位成员在某个餐次里的独立选择</td><td>合并后无法还原"谁的几份"，个人营养与改单都会失真</td></tr>
+    <tr><td><strong>制作任务</strong></td><td>汇总后由接单人负责的执行单元，内含多个菜品明细</td><td>制作由"谁接单"决定，与点菜人无关</td></tr>
+  </table>
+
+  <div class="note">
+    <div class="nt">关键例子</div>
+    三个成员在同一顿晚餐都点了番茄炒蛋：A 点 1 份、B 点 1 份、C 点 2 份。系统汇总成"番茄炒蛋 4 份"的制作任务，但必须保留 4 份需求分别来自谁 —— 否则既算不出个人摄入，也无法在有人改单时准确扣减。
+  </div>
+
+  <h3>2.3 对象链路</h3>
+  <table>
+    <tr><th>层级</th><th>对象</th><th>基数关系</th></tr>
+    <tr><td>1</td><td>家庭 Household</td><td>1 : N 成员 / 菜谱 / 餐次</td></tr>
+    <tr><td>2</td><td>餐次 Meal Session</td><td>1 : N 个人点菜单；1 : 1 汇总单</td></tr>
+    <tr><td>3</td><td>个人点菜单 Personal Order</td><td>1 : N 菜品明细；每餐每人仅一份有效单</td></tr>
+    <tr><td>4</td><td>餐次汇总单 Meal Aggregate</td><td>1 : N 制作任务；保存汇总快照</td></tr>
+    <tr><td>5</td><td>制作任务 Production Task</td><td>1 : N 菜品明细；任一时刻至多一个有效接单人</td></tr>
+    <tr><td>6</td><td>出餐记录 Serving Record</td><td>记录计划份数与实际份数</td></tr>
+    <tr><td>7</td><td>营养摄入 Nutrition Intake</td><td>按成员 × 餐次记录实际食用份额与营养素</td></tr>
+  </table>
+</section>
+
+<!-- ============ 3 ============ -->
+<section id="s3">
+  <h2><span class="num">03</span>角色与权限</h2>
+  <p class="sec-note">不设复杂管理员体系；角色可叠加，家庭创建者也能点菜和接单。</p>
+
+  <h3>3.1 角色定义</h3>
+  <table>
+    <tr><th>角色</th><th>权限</th><th>叠加</th></tr>
+    <tr><td>家庭创建者</td><td>创建家庭、邀请成员、管理成员与家庭设置、转移创建者；<strong>唯一有权确认菜单并开始制作</strong></td><td>可叠加其余全部</td></tr>
+    <tr><td>普通成员</td><td>浏览菜谱、独立点菜、修改本人未锁定点菜单、查看家庭菜单与统计</td><td>基础角色</td></tr>
+    <tr><td>制作成员</td><td>认领待接任务、开始制作、更新进度、登记逐菜完成、确认出餐</td><td>由"接单"动作获得，不预先任命</td></tr>
+    <tr><td>菜谱贡献者</td><td>创建菜谱、编辑自己创建的菜谱</td><td>是否可改他人菜谱由家庭设置决定 <span class="tbd">待定</span></td></tr>
+  </table>
+
+  <h3>3.2 身份与隔离</h3>
+  <ul>
+    <li>微信登录换取服务端会话，<strong>服务端解析身份</strong>，不信任客户端传入的 userId。</li>
+    <li>每个家庭一个独立数据空间，成员通过邀请码/分享卡片加入。</li>
+    <li>邀请码有有效期与使用次数上限，避免私有数据被无关人员访问。</li>
+    <li>第一版一个微信用户只加入一个家庭；多家庭切换列为后续。</li>
+    <li>创建者退出前必须能转移权限，不能让家庭空间失去管理能力。</li>
+  </ul>
+</section>
+
+<!-- ============ 4 ============ -->
+<section id="s4">
+  <h2><span class="num">04</span>功能需求与验收标准</h2>
+  <p class="sec-note">P0 = MVP 必须；P1 = 第一版之后优先；P2 = 后续扩展。编号供开发与测试直接引用。</p>
+
+  <h3 id="s4-1">4.1 家庭与成员</h3>
+  <table>
+    <tr><th>编号</th><th>需求</th><th>级别</th><th>验收标准</th></tr>
+    <tr><td>FAM-01</td><td>创建家庭</td><td class="p0">P0</td><td>登录用户可创建家庭并成为创建者</td></tr>
+    <tr><td>FAM-02</td><td>邀请成员</td><td class="p0">P0</td><td>通过有效邀请加入后可访问家庭数据</td></tr>
+    <tr><td>FAM-03</td><td>成员列表</td><td class="p0">P0</td><td>展示头像、昵称与成员身份</td></tr>
+    <tr><td>FAM-04</td><td>权限校验</td><td class="p0">P0</td><td>非家庭成员无法读取或修改家庭任何资源</td></tr>
+    <tr><td>FAM-05</td><td>退出与移除</td><td>P1</td><td>退出后立即失去该家庭数据访问权</td></tr>
+    <tr><td>FAM-06</td><td>转移创建者</td><td>P1</td><td>原创建者可把管理权限转交其他成员</td></tr>
+    <tr><td>FAM-07</td><td>忌口与过敏档案</td><td class="p0">P0</td><td>每位成员可维护忌口项与过敏原；点菜时命中过敏原的菜品给出提示</td></tr>
+    <tr><td>FAM-08</td><td>退出后历史保留</td><td class="p0">P0</td><td>成员退出后，其历史点菜与出餐记录仍保留在家庭统计中</td></tr>
+  </table>
+
+  <h3 id="s4-2">4.2 日历与餐次</h3>
+  <table>
+    <tr><th>编号</th><th>需求</th><th>级别</th><th>验收标准</th></tr>
+    <tr><td>CAL-01</td><td>月历查看</td><td class="p0">P0</td><td>可切换月份，查看各日餐次状态标记</td></tr>
+    <tr><td>CAL-02</td><td>日期详情</td><td class="p0">P0</td><td>点击日期查看早餐、午餐、晚餐、加餐</td></tr>
+    <tr><td>CAL-03</td><td>今日菜单</td><td class="p0">P0</td><td>展示今日各餐次已提交菜品与任务状态</td></tr>
+    <tr><td>CAL-04</td><td>历史饮食</td><td class="p0">P0</td><td>可查询过去日期的实际出餐记录</td></tr>
+    <tr><td>CAL-05</td><td>未来计划</td><td>P1</td><td>可提前为未来日期点菜</td></tr>
+    <tr><td>CAL-06</td><td>餐次状态汇总</td><td class="p0">P0</td><td>能区分未开始 / 点菜中 / 待制作 / 制作中 / 部分出餐 / 已出餐</td></tr>
+    <tr><td>CAL-07</td><td>加餐不限次数</td><td class="p0">P0</td><td>同一天的加餐可创建多个，各自独立点菜与制作；早/中/晚各仅一个</td></tr>
+  </table>
+  <p class="sec-note">餐次状态不能只看"有没有订单"：当 A 已提交、B 尚未提交时，餐次仍处于「点菜中」。</p>
+
+  <h3 id="s4-3">4.3 个人点菜</h3>
+  <table>
+    <tr><th>编号</th><th>需求</th><th>级别</th><th>验收标准</th></tr>
+    <tr><td>ORD-01</td><td>选择日期与餐次</td><td class="p0">P0</td><td>选定目标餐次后进入点菜，切换时提示保存草稿</td></tr>
+    <tr><td>ORD-02</td><td>浏览与筛选菜谱</td><td class="p0">P0</td><td>支持关键词、菜品类型、风味标签组合筛选</td></tr>
+    <tr><td>ORD-03</td><td>勾选与调份数</td><td class="p0">P0</td><td>可增删菜品、调整份数（非负整数）</td></tr>
+    <tr><td>ORD-04</td><td>备注</td><td class="p0">P0</td><td>支持整餐备注与单道菜备注</td></tr>
+    <tr><td>ORD-05</td><td>提交个人点菜单</td><td class="p0">P0</td><td>提交后生成可追踪记录并显示提交时间与状态</td></tr>
+    <tr><td>ORD-06</td><td>修改或撤销</td><td class="p0">P0</td><td>按餐次状态控制：草稿/已提交可改，锁定后只读</td></tr>
+    <tr><td>ORD-07</td><td>查看他人点菜</td><td class="p0">P0</td><td>成员可查看汇总需求与各人明细</td></tr>
+    <tr><td>ORD-08</td><td>个人点菜历史</td><td>P1</td><td>可查看自己历史提交的菜品</td></tr>
+    <tr><td>ORD-09</td><td>忌口提示</td><td class="p0">P0</td><td>勾选含本人过敏原的菜品时提示，不强制阻断，由本人决定</td></tr>
+  </table>
+  <p class="sec-note">份数、人数、食用量三者不同：一人可点 2 份同一道菜；也可点 1 份标注「多人共享」。</p>
+
+  <h3 id="s4-4">4.4 汇总与制作任务</h3>
+  <table>
+    <tr><th>编号</th><th>需求</th><th>级别</th><th>验收标准</th></tr>
+    <tr><td>KIT-01</td><td>汇总所有成员点菜</td><td class="p0">P0</td><td>同餐次菜品按菜谱归并，可展开看每人份数与备注</td></tr>
+    <tr><td>KIT-02</td><td>展示总份数</td><td class="p0">P0</td><td>每道菜总份数 = 有效个人需求之和</td></tr>
+    <tr><td>KIT-03</td><td>认领任务</td><td class="p0">P0</td><td>未被认领的任务可由家庭成员接单</td></tr>
+    <tr><td>KIT-04</td><td>防止重复接单</td><td class="p0">P0</td><td>并发情况下同一任务仅一个有效接单人</td></tr>
+    <tr><td>KIT-05</td><td>开始制作</td><td class="p0">P0</td><td>接单人可将任务置为制作中</td></tr>
+    <tr><td>KIT-06</td><td>逐道菜完成</td><td class="p0">P0</td><td>记录每道菜完成状态、时间与操作人</td></tr>
+    <tr><td>KIT-07</td><td>整餐出餐确认</td><td class="p0">P0</td><td>所有必需菜品完成后才可确认出餐</td></tr>
+    <tr><td>KIT-08</td><td>拆分任务</td><td>P1</td><td>一餐可拆为主食 / 热菜等多个任务，分别认领</td></tr>
+    <tr><td>KIT-09</td><td>制作异常</td><td>P1</td><td>可登记缺料、取消菜品、部分完成并留原因</td></tr>
+    <tr><td>KIT-10</td><td>确认菜单并开始制作</td><td class="p0">P0</td><td><strong>仅家庭创建者</strong>可操作；成功后锁定点菜单并生成制作任务</td></tr>
+    <tr><td>KIT-11</td><td>确认后不支持追加</td><td class="p0">P0</td><td>已确认餐次不再接受新增需求；补菜入口引导至新建加餐</td></tr>
+  </table>
+  <p class="sec-note">界面可提供「一键接下本餐全部菜品」，但底层必须允许按菜品分单认领，否则后续无法支持协作做饭。</p>
+
+  <h3 id="s4-5">4.5 菜谱</h3>
+  <table>
+    <tr><th>编号</th><th>需求</th><th>级别</th><th>验收标准</th></tr>
+    <tr><td>REC-01</td><td>创建与编辑</td><td class="p0">P0</td><td>可维护名称、图片、食材、步骤、时长、份量</td></tr>
+    <tr><td>REC-02</td><td>食材结构化</td><td class="p0">P0</td><td>每项食材含名称、数量、单位，可随份数换算</td></tr>
+    <tr><td>REC-03</td><td>多标签</td><td class="p0">P0</td><td>支持风味、菜品类型、难度等分类标签</td></tr>
+    <tr><td>REC-04</td><td>搜索与筛选</td><td class="p0">P0</td><td>关键词 + 类型 + 标签可组合</td></tr>
+    <tr><td>REC-05</td><td>收藏</td><td>P1</td><td>成员可维护个人收藏</td></tr>
+    <tr><td>REC-06</td><td>图片上传</td><td class="p0">P0</td><td>上传后列表与详情均可见</td></tr>
+    <tr><td>REC-07</td><td>归档与恢复</td><td class="p0">P0</td><td>归档后不进入点菜候选与随机抽菜，可随时恢复；历史订单引用不受影响</td></tr>
+    <tr><td>REC-08</td><td>文档导入</td><td>P1</td><td>解析文件后由用户确认字段再入库</td></tr>
+    <tr><td>REC-09</td><td>AI 辅助录入</td><td>P2</td><td>从图片或文档提取字段，人工确认后入库</td></tr>
+    <tr><td>REC-10</td><td>图片数量与压缩</td><td class="p0">P0</td><td>图片数量不设上限；上传时客户端压缩，服务端生成缩略图变体，列表加载缩略图</td></tr>
+    <tr><td>REC-11</td><td>时令上下架</td><td>P1</td><td>可标记供应月份区间，非供应期自动不进入候选，到期可手动恢复</td></tr>
+  </table>
+
+  <h3 id="s4-6">4.6 统计与营养</h3>
+  <table>
+    <tr><th>编号</th><th>需求</th><th>级别</th><th>验收标准</th></tr>
+    <tr><td>STA-01</td><td>菜品热门排行</td><td class="p0">P0</td><td>可按提交次数或出餐次数排序，口径在页面标注</td></tr>
+    <tr><td>STA-02</td><td>周饮食记录</td><td class="p0">P0</td><td>按日期展示实际出餐菜品</td></tr>
+    <tr><td>STA-03</td><td>餐次分布图</td><td class="p0">P0</td><td>按早 / 中 / 晚 / 加餐统计</td></tr>
+    <tr><td>STA-04</td><td>菜品多样性</td><td>P1</td><td>统计指定期间不同菜品数量</td></tr>
+    <tr><td>NUT-01</td><td>菜谱营养字段</td><td class="p0">P0</td><td>可存能量、蛋白质、脂肪、碳水，含计量基准</td></tr>
+    <tr><td>NUT-02</td><td>单餐营养估算</td><td>P1</td><td>汇总该餐各菜营养估算</td></tr>
+    <tr><td>NUT-03</td><td>每日个人摄入</td><td>P1</td><td>按个人实际食用份额估算摄入</td></tr>
+    <tr><td>NUT-04</td><td>营养趋势</td><td>P1</td><td>个人或家庭的周趋势图</td></tr>
+    <tr><td>NUT-05</td><td>营养目标</td><td>P2</td><td>可设置每日能量或营养素目标</td></tr>
+  </table>
+
+  <h3 id="s4-7">4.7 通知与随机推荐</h3>
+  <table>
+    <tr><th>编号</th><th>需求</th><th>级别</th><th>验收标准</th></tr>
+    <tr><td>MSG-01</td><td>任务产生提醒</td><td class="p0">P0</td><td>制作任务生成后，成员可从小程序内看到</td></tr>
+    <tr><td>MSG-02</td><td>状态变更通知</td><td class="p0">P0</td><td>接单、出餐等状态变更对相关成员可见</td></tr>
+    <tr><td>MSG-03</td><td>微信订阅消息</td><td>P1</td><td>登录时申请订阅授权并在关键动作处累积额度；额度耗尽时降级站内通知，不谎报已发送</td></tr>
+    <tr><td>RND-01</td><td>随机抽菜</td><td class="p0">P0</td><td>从符合筛选条件的菜谱中抽取，可一键加入清单</td></tr>
+    <tr><td>RND-02</td><td>排除指定菜</td><td>P1</td><td>可手动排除不想吃的菜</td></tr>
+    <tr><td>RND-03</td><td>近期去重</td><td>P1</td><td>降低近期已吃菜品的推荐概率</td></tr>
+    <tr><td>RND-04</td><td>一餐组合</td><td>P2</td><td>按菜品类型搭配多道菜</td></tr>
+  </table>
+  <p class="sec-note">随机抽菜的候选池只包含状态为「可用」的菜谱；已归档菜谱永远不参与抽取。</p>
+
+  <h3 id="s4-8">4.8 食材采购清单</h3>
+  <table>
+    <tr><th>编号</th><th>需求</th><th>级别</th><th>验收标准</th></tr>
+    <tr><td>PUR-01</td><td>按汇总生成采购清单</td><td class="p0">P0</td><td>餐次确认后，按各菜总份数与菜谱基准份数换算食材用量</td></tr>
+    <tr><td>PUR-02</td><td>按食材合并</td><td class="p0">P0</td><td>同名同单位的食材合并数量；单位不同则不合并，分别列出</td></tr>
+    <tr><td>PUR-03</td><td>勾选已备</td><td>P1</td><td>可逐项勾选已买/已有，未勾选项保留在清单中</td></tr>
+    <tr><td>PUR-04</td><td>多餐合并</td><td>P1</td><td>可把同一天的多个餐次合并为一张采购清单</td></tr>
+    <tr><td>PUR-05</td><td>导出与分享</td><td>P1</td><td>可复制为文本，便于发给家人或对照购买</td></tr>
+  </table>
+  <p class="sec-note">换算规则：用量 = 菜谱基准用量 ÷ 基准份数 × 该菜总份数。结果保留合理精度（如「1.5 个」「300 g」），不可整除时向上取整到可购买单位。</p>
+</section>
+
+<!-- ============ 5 ============ -->
+<section id="s5">
+  <h2><span class="num">05</span>页面清单与导航结构</h2>
+  <p class="sec-note">底部五个主导航：首页 / 点菜 / 菜谱 / 制作 / 统计。家庭管理与个人设置放在首页右上角，避免导航拥挤。</p>
+
+  <table>
+    <tr><th>ID</th><th>页面</th><th>核心内容与操作</th></tr>
+    <tr><td>P01</td><td>微信登录</td><td>微信身份登录、用户资料初始化</td></tr>
+    <tr><td>P02</td><td>家庭初始化</td><td>创建家庭、输入邀请码、查看成员</td></tr>
+    <tr><td>P03</td><td>首页</td><td>今日菜单、餐次状态、待处理事项、快捷点菜</td></tr>
+    <tr><td>P04</td><td>日历页</td><td>月历切换、餐次状态标记、日期选择</td></tr>
+    <tr><td>P05</td><td>餐次详情</td><td>个人点菜情况、汇总菜单、制作进度</td></tr>
+    <tr><td>P06</td><td>点菜入口</td><td>选择日期、餐次，进入当前点菜单</td></tr>
+    <tr><td>P07</td><td>菜谱选择器</td><td>搜索、筛选、标签、添加菜品</td></tr>
+    <tr><td>P08</td><td>点菜清单</td><td>份数、备注、多人共享标记、提交</td></tr>
+    <tr><td>P09</td><td>个人点菜单详情</td><td>修改记录、状态、撤销</td></tr>
+    <tr><td>P10</td><td>餐次汇总详情</td><td>合并菜品、总份数、个人需求明细、确认菜单</td></tr>
+    <tr><td>P11</td><td>菜谱列表</td><td>图片卡片、分类、搜索、收藏</td></tr>
+    <tr><td>P12</td><td>菜谱详情</td><td>图片、食材、步骤、耗时、营养估值</td></tr>
+    <tr><td>P13</td><td>新建 / 编辑菜谱</td><td>字段表单、食材列表、步骤编辑、标签</td></tr>
+    <tr><td>P14</td><td>菜谱导入</td><td>上传文件、解析结果、字段确认</td></tr>
+    <tr><td>P15</td><td>随机抽菜</td><td>条件选择、结果卡、加入清单</td></tr>
+    <tr><td>P16</td><td>制作任务列表</td><td>待接 / 制作中 / 已完成 / 我的任务</td></tr>
+    <tr><td>P17</td><td>制作任务详情</td><td>做法、总份数、个人要求、逐菜状态操作</td></tr>
+    <tr><td>P18</td><td>出餐确认</td><td>完成情况、异常说明、计划 vs 实际份数</td></tr>
+    <tr><td>P19</td><td>饮食统计</td><td>时间范围、热门菜、周饮食、餐次图表</td></tr>
+    <tr><td>P20</td><td>营养统计</td><td>能量、蛋白质、脂肪、碳水、个人趋势</td></tr>
+    <tr><td>P21</td><td>通知中心</td><td>新任务、接单、制作状态、出餐记录</td></tr>
+    <tr><td>P22</td><td>家庭管理</td><td>成员、邀请、权限、创建者转移</td></tr>
+    <tr><td>P23</td><td>个人设置</td><td>头像昵称、饮食偏好、通知授权、隐私</td></tr>
+    <tr><td>P24</td><td>数据导出</td><td>导出菜谱与历史记录</td></tr>
+    <tr><td>P25</td><td>食材采购清单</td><td>按餐次汇总换算合并，勾选已备，复制分享</td></tr>
+    <tr><td>P26</td><td>成员档案</td><td>头像昵称、忌口与过敏原、通知授权状态</td></tr>
+  </table>
+  <p class="sec-note">清单用于界定能力边界，不要求每项都是独立路由。随机抽菜可作为点菜页弹层；出餐确认可作为制作详情内的操作面板。</p>
+</section>
+
+<!-- ============ 6 ============ -->
+<section id="s6">
+  <h2><span class="num">06</span>UI 原型</h2>
+  <p class="sec-note">干净、白底、少色、强留白：只用一种强调色承担主操作，状态色仅在必要时出现。</p>
+
+  <h3 id="s6-0">6.1 设计规范</h3>
+  <div class="swatches">
+    <div class="sw"><div class="cbox" style="background:#ffffff;border-bottom:1px solid var(--line)"></div><div class="info"><b>#FFFFFF 背景</b>页面与卡片底色</div></div>
+    <div class="sw"><div class="cbox" style="background:#f7f8f7"></div><div class="info"><b>#F7F8F7 浅面</b>次级区域 / 营养块</div></div>
+    <div class="sw"><div class="cbox" style="background:#e9ece9"></div><div class="info"><b>#E9ECE9 描边</b>卡片与分割线</div></div>
+    <div class="sw"><div class="cbox" style="background:#1d211e"></div><div class="info"><b>#1D211E 主文字</b>标题与数值</div></div>
+    <div class="sw"><div class="cbox" style="background:#8b9490"></div><div class="info"><b>#8B9490 次文字</b>说明与单位</div></div>
+    <div class="sw"><div class="cbox" style="background:#2e7d5b"></div><div class="info"><b>#2E7D5B 强调色</b>主按钮 / 选中态</div></div>
+    <div class="sw"><div class="cbox" style="background:#eaf4ef"></div><div class="info"><b>#EAF4EF 强调弱底</b>标签 / 已完成</div></div>
+    <div class="sw"><div class="cbox" style="background:#9a6b13"></div><div class="info"><b>#9A6B13 进行中</b>仅状态标签使用</div></div>
+  </div>
+
+  <table>
+    <tr><th>规范项</th><th>取值</th><th>说明</th></tr>
+    <tr><td>字号层级</td><td>标题 15 / 正文 13 / 辅助 11 / 标签 10</td><td>统一 4 级，不出现临时字号</td></tr>
+    <tr><td>圆角</td><td>卡片 10 · 胶囊 20 · 手机壳 26</td><td>卡片与按钮同为柔和圆角，不用大圆角卡片</td></tr>
+    <tr><td>间距</td><td>区块 12 · 卡片内 10 · 行内 6</td><td>以 2 为倍数，避免零散数值</td></tr>
+    <tr><td>阴影</td><td>仅页面容器一层极轻阴影</td><td>卡片不用阴影，靠 1px 描边区分层级</td></tr>
+    <tr><td>色彩纪律</td><td>一屏至多一个强调色 + 一个状态色</td><td>状态色只出现在状态标签，不用于装饰</td></tr>
+  </table>
+
+  <h3 id="s6-1">6.2 九屏原型</h3>
+  <p class="sec-note">按真实使用顺序排列（共 9 屏）：看今天 → 点菜 → 看汇总 → 接单 → 做菜 → 出餐 → 采购 → 查菜谱 → 看统计。</p>
+
+  <div class="screens">
+
+    <!-- P03 首页 -->
+    <div class="screen">
+      <div class="phone">
+        <div class="p-status"><span>9:41</span><span class="icons">▪▪▪</span></div>
+        <div class="p-nav left">家庭餐桌<span class="r">邀请成员</span></div>
+        <div class="p-body">
+          <div class="bar-date"><span>周一 · 10 月 26 日</span><span>3 位成员</span></div>
+
+          <div class="h-sec">今天吃什么</div>
+          <div class="stack tight">
+            <div class="meal">
+              <div class="l"><span class="n">早餐</span><span class="s">小米粥 · 煎蛋</span></div>
+              <span class="badge done">已出餐</span>
+            </div>
+            <div class="meal">
+              <div class="l"><span class="n">午餐</span><span class="s">番茄炒蛋 等 3 道</span></div>
+              <span class="badge doing">制作中 2/4</span>
+            </div>
+            <div class="meal">
+              <div class="l"><span class="n">晚餐</span><span class="s">1 / 2 位成员已提交</span></div>
+              <span class="badge wait">点菜中</span>
+            </div>
+          </div>
+
+          <div class="h-sec">待处理</div>
+          <div class="card flat stack tight">
+            <div class="row"><span>晚餐还有 1 位成员未提交</span><span class="act" style="color:var(--accent);font-size:10px;font-weight:600;">催一下</span></div>
+            <div class="row"><span>有 2 道菜等待接单</span><span style="color:var(--accent);font-size:10px;font-weight:600;">去接单</span></div>
+          </div>
+
+          <div class="stack tight">
+            <div class="row card" style="padding:8px 11px;"><span>不知道吃什么</span><span style="color:var(--muted);font-size:9.5px;">随机一道 ›</span></div>
+            <div class="row card" style="padding:8px 11px;"><span>最近出餐</span><span style="color:var(--muted);font-size:9.5px;">蒜蓉西兰花 ›</span></div>
+          </div>
+        </div>
+        <div class="p-tab">
+          <div class="t on"><svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5.5 9.5V20h13V9.5"/></svg>首页</div>
+          <div class="t"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h9"/></svg>点菜</div>
+          <div class="t"><svg viewBox="0 0 24 24"><path d="M5 4h11a2 2 0 0 1 2 2v14H7a2 2 0 0 1-2-2z"/><path d="M9 8h6"/></svg>菜谱</div>
+          <div class="t"><svg viewBox="0 0 24 24"><path d="M4 10h16"/><path d="M6 10a6 6 0 0 0 12 0"/><path d="M9 7V5M15 7V5"/></svg>制作</div>
+          <div class="t"><svg viewBox="0 0 24 24"><path d="M5 20V11M12 20V5M19 20V14"/></svg>统计</div>
+        </div>
+      </div>
+      <div class="cap"><b>P03 首页</b> · 优先暴露"现在该做什么"</div>
+    </div>
+
+    <!-- P07 点菜 -->
+    <div class="screen">
+      <div class="phone">
+        <div class="p-status"><span>9:41</span><span class="icons">▪▪▪</span></div>
+        <div class="p-nav left"><span>我的点菜</span><span class="r">10 月 26 日 · 晚餐</span></div>
+        <div class="p-body">
+          <div class="chips">
+            <span class="chip on">全部</span><span class="chip">荤菜</span><span class="chip">素菜</span><span class="chip">主食</span><span class="chip">汤羹</span>
+          </div>
+          <div class="chips">
+            <span class="chip on">酸</span><span class="chip">鲜香</span><span class="chip">爽口</span><span class="chip">30 分钟内</span>
+          </div>
+
+          <div class="dishline">
+            <img src="images/dish-1.jpg" alt="">
+            <div class="dt">
+              <div class="n">番茄炒蛋</div>
+              <div class="m">鲜香 · 15 分钟 · 220 kcal/份</div>
+            </div>
+            <div class="stepper"><span class="b">−</span><span class="v">2</span><span class="b">+</span></div>
+          </div>
+
+          <div class="dishline">
+            <img src="images/dish-5.jpg" alt="">
+            <div class="dt">
+              <div class="n">酸辣土豆丝</div>
+              <div class="m">酸 · 15 分钟 · 150 kcal/份</div>
+            </div>
+            <div class="stepper"><span class="b">−</span><span class="v">1</span><span class="b">+</span></div>
+          </div>
+
+          <div class="dishline">
+            <img src="images/dish-4.jpg" alt="">
+            <div class="dt">
+              <div class="n">蒜蓉西兰花</div>
+              <div class="m">清淡 · 12 分钟 · 110 kcal/份</div>
+            </div>
+            <div class="stepper"><span class="b">−</span><span class="v zero">0</span><span class="b">+</span></div>
+          </div>
+
+          <div class="dishline" style="border-color:#e8d3a8;">
+            <img src="images/dish-2.jpg" alt="">
+            <div class="dt">
+              <div class="n">麻婆豆腐</div>
+              <div class="m">麻 · 25 分钟 · 320 kcal/份</div>
+              <div class="m" style="color:var(--amber);">含牛肉 · 与我的忌口冲突</div>
+            </div>
+            <div class="stepper"><span class="b">−</span><span class="v zero">0</span><span class="b">+</span></div>
+          </div>
+
+          <div class="card flat" style="padding:8px 10px;">
+            <div class="row"><span style="font-size:10.5px;">整餐备注</span><span style="font-size:10px;color:var(--muted);">少盐 ›</span></div>
+          </div>
+
+          <div class="actionbar">
+            <div class="sum">已选 <b>2</b> 道 · <b>3</b> 份<br>约 <b>590</b> kcal · 27 分钟</div>
+            <span class="btn">提交点菜单</span>
+          </div>
+        </div>
+        <div class="p-tab">
+          <div class="t"><svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5.5 9.5V20h13V9.5"/></svg>首页</div>
+          <div class="t on"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h9"/></svg>点菜</div>
+          <div class="t"><svg viewBox="0 0 24 24"><path d="M5 4h11a2 2 0 0 1 2 2v14H7a2 2 0 0 1-2-2z"/><path d="M9 8h6"/></svg>菜谱</div>
+          <div class="t"><svg viewBox="0 0 24 24"><path d="M4 10h16"/><path d="M6 10a6 6 0 0 0 12 0"/><path d="M9 7V5M15 7V5"/></svg>制作</div>
+          <div class="t"><svg viewBox="0 0 24 24"><path d="M5 20V11M12 20V5M19 20V14"/></svg>统计</div>
+        </div>
+      </div>
+      <div class="cap"><b>P07 点菜</b> · 底部固定清单，切页不丢选择</div>
+    </div>
+
+    <!-- P10 汇总 -->
+    <div class="screen">
+      <div class="phone">
+        <div class="p-status"><span>9:41</span><span class="icons">▪▪▪</span></div>
+        <div class="p-nav left"><span>晚餐菜单汇总</span><span class="r">3 位成员</span></div>
+        <div class="p-body">
+          <div class="card">
+            <div class="row" style="margin-bottom:5px;"><span style="font-size:10.5px;color:var(--muted);">提交进度</span><span style="font-size:11px;font-weight:650;">2 / 3</span></div>
+            <div class="prog"><i style="width:66%"></i></div>
+            <div class="row" style="margin-top:7px;">
+              <div class="member"><span class="ava">我</span>已提交</div>
+              <div class="member"><span class="ava b">妈</span>已提交</div>
+              <div class="member"><span class="ava a">爸</span><span style="color:var(--muted);">未提交</span></div>
+            </div>
+          </div>
+
+          <div class="card stack tight">
+            <div class="row"><span style="font-weight:620;font-size:12px;">番茄炒蛋</span><span class="badge done">可合并</span></div>
+            <div style="font-size:10px;color:var(--muted);">合计 4 份 · 3 人点选</div>
+            <div style="font-size:10px;color:var(--ink-2);">我 1 份 · 妈 1 份 · 爸 2 份</div>
+          </div>
+
+          <div class="card stack tight">
+            <div class="row"><span style="font-weight:620;font-size:12px;">青椒炒肉</span><span class="badge doing">需确认备注</span></div>
+            <div style="font-size:10px;color:var(--muted);">合计 2 份 · 2 人点选</div>
+            <div style="font-size:10px;color:var(--ink-2);">我 不放辣椒 · 妈 正常口味</div>
+          </div>
+
+          <div class="note" style="margin:0;padding:9px 11px;font-size:10px;">
+            <b style="font-size:10.5px;">制作提示</b><br>1 道菜存在不同口味要求，请确认是否分锅制作。
+          </div>
+
+          <div class="row card" style="padding:8px 11px;">
+            <span style="font-size:10.5px;">生成采购清单</span>
+            <span style="color:var(--muted);font-size:9.5px;">7 项食材 ›</span>
+          </div>
+
+          <div class="actionbar">
+            <div class="sum">合计 <b>6</b> 份 · <b>3</b> 道菜<br>预计 <b>42</b> 分钟</div>
+            <span class="btn">确认并开始制作</span>
+          </div>
+        </div>
+        <div class="p-tab">
+          <div class="t"><svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5.5 9.5V20h13V9.5"/></svg>首页</div>
+          <div class="t on"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h9"/></svg>点菜</div>
+          <div class="t"><svg viewBox="0 0 24 24"><path d="M5 4h11a2 2 0 0 1 2 2v14H7a2 2 0 0 1-2-2z"/><path d="M9 8h6"/></svg>菜谱</div>
+          <div class="t"><svg viewBox="0 0 24 24"><path d="M4 10h16"/><path d="M6 10a6 6 0 0 0 12 0"/><path d="M9 7V5M15 7V5"/></svg>制作</div>
+          <div class="t"><svg viewBox="0 0 24 24"><path d="M5 20V11M12 20V5M19 20V14"/></svg>统计</div>
+        </div>
+      </div>
+      <div class="cap"><b>P10 汇总</b> · 同时表达谁点了什么、共多少、哪些不能合并</div>
+    </div>
+
+    <!-- P17 制作详情 -->
+    <div class="screen">
+      <div class="phone">
+        <div class="p-status"><span>9:41</span><span class="icons">▪▪▪</span></div>
+        <div class="p-nav left"><span>制作 · 晚餐</span><span class="r">已接单</span></div>
+        <div class="p-body">
+          <div class="card">
+            <div class="row" style="margin-bottom:5px;">
+              <span style="font-size:11px;font-weight:620;">我 负责制作</span>
+              <span class="badge doing">2 / 4 完成</span>
+            </div>
+            <div class="prog"><i style="width:50%"></i></div>
+            <div class="row" style="margin-top:6px;font-size:9.8px;color:var(--muted);">
+              <span>接单 18:02</span><span>开始 18:05</span>
+            </div>
+          </div>
+
+          <div class="h-sec">菜品明细</div>
+          <div class="card" style="padding:4px 11px;">
+            <div class="tickline"><span class="tick ok">✓</span><span class="nm">番茄炒蛋</span><span class="qt">4 份</span></div>
+            <div class="tickline"><span class="tick ok">✓</span><span class="nm">蒜蓉西兰花</span><span class="qt">2 份</span></div>
+            <div class="tickline"><span class="tick"></span><span class="nm">青椒炒肉</span><span class="qt">2 份 · 1 份不放辣</span></div>
+            <div class="tickline"><span class="tick"></span><span class="nm">米饭</span><span class="qt">3 份</span></div>
+          </div>
+
+          <div class="card flat" style="padding:9px 11px;">
+            <div style="font-size:10px;color:var(--ink-2);">
+              <b style="font-size:10.5px;">成员要求</b><br>
+              番茄炒蛋：我 1 · 妈 1 · 爸 2<br>
+              青椒炒肉：我 不放辣椒 · 妈 正常
+            </div>
+          </div>
+
+          <div class="actionbar">
+            <div class="sum">全部菜品完成后<br>可确认出餐</div>
+            <span class="btn off">确认本餐出餐</span>
+          </div>
+        </div>
+        <div class="p-tab">
+          <div class="t"><svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5.5 9.5V20h13V9.5"/></svg>首页</div>
+          <div class="t"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h9"/></svg>点菜</div>
+          <div class="t"><svg viewBox="0 0 24 24"><path d="M5 4h11a2 2 0 0 1 2 2v14H7a2 2 0 0 1-2-2z"/><path d="M9 8h6"/></svg>菜谱</div>
+          <div class="t on"><svg viewBox="0 0 24 24"><path d="M4 10h16"/><path d="M6 10a6 6 0 0 0 12 0"/><path d="M9 7V5M15 7V5"/></svg>制作</div>
+          <div class="t"><svg viewBox="0 0 24 24"><path d="M5 20V11M12 20V5M19 20V14"/></svg>统计</div>
+        </div>
+      </div>
+      <div class="cap"><b>P17 制作</b> · 逐道菜打勾，菜品状态与整餐状态分离</div>
+    </div>
+
+    <!-- P18 出餐确认 -->
+    <div class="screen">
+      <div class="phone">
+        <div class="p-status"><span>9:41</span><span class="icons">▪▪▪</span></div>
+        <div class="p-nav left"><span>确认出餐</span><span class="r">晚餐</span></div>
+        <div class="p-body">
+          <p style="font-size:10.5px;color:var(--muted);margin:0;">核对计划与实际份数后再确认。未完成的菜品不会被自动标记为已出餐。</p>
+
+          <div class="card" style="padding:4px 11px;">
+            <div class="row" style="padding:5px 0;border-bottom:1px solid var(--line);font-size:9.6px;color:var(--muted);">
+              <span style="flex:1;">菜品</span><span style="width:38px;text-align:right;">计划</span><span style="width:38px;text-align:right;">实际</span>
+            </div>
+            <div class="row" style="padding:6px 0;border-bottom:1px solid var(--line);font-size:11px;">
+              <span style="flex:1;">番茄炒蛋</span><span style="width:38px;text-align:right;">4 份</span><span style="width:38px;text-align:right;font-weight:600;">4 份</span>
+            </div>
+            <div class="row" style="padding:6px 0;border-bottom:1px solid var(--line);font-size:11px;">
+              <span style="flex:1;">蒜蓉西兰花</span><span style="width:38px;text-align:right;">2 份</span><span style="width:38px;text-align:right;font-weight:600;">2 份</span>
+            </div>
+            <div class="row" style="padding:6px 0;border-bottom:1px solid var(--line);font-size:11px;">
+              <span style="flex:1;">青椒炒肉</span><span style="width:38px;text-align:right;">2 份</span><span style="width:38px;text-align:right;font-weight:600;">2 份</span>
+            </div>
+            <div class="row" style="padding:6px 0;font-size:11px;">
+              <span style="flex:1;">米饭</span><span style="width:38px;text-align:right;">3 份</span><span style="width:38px;text-align:right;font-weight:600;">3 份</span>
+            </div>
+          </div>
+
+          <div class="card flat stack tight" style="padding:9px 11px;font-size:10px;">
+            <div class="row"><span style="color:var(--muted);">未完成菜品</span><span>0 道</span></div>
+            <div class="row"><span style="color:var(--muted);">异常记录</span><span>无</span></div>
+            <div class="row"><span style="color:var(--muted);">确认人</span><span>我</span></div>
+          </div>
+
+          <div class="note" style="margin:0;padding:9px 11px;font-size:10px;">
+            确认后将写入出餐记录，并通知其他成员；历史记录不可直接改动，如需修正走带原因的修正流程。
+          </div>
+
+          <div class="actionbar" style="gap:6px;">
+            <span class="btn line" style="flex:1;text-align:center;">暂不确认</span>
+            <span class="btn" style="flex:1.3;text-align:center;">确认出餐</span>
+          </div>
+        </div>
+        <div class="p-tab">
+          <div class="t"><svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5.5 9.5V20h13V9.5"/></svg>首页</div>
+          <div class="t"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h9"/></svg>点菜</div>
+          <div class="t"><svg viewBox="0 0 24 24"><path d="M5 4h11a2 2 0 0 1 2 2v14H7a2 2 0 0 1-2-2z"/><path d="M9 8h6"/></svg>菜谱</div>
+          <div class="t on"><svg viewBox="0 0 24 24"><path d="M4 10h16"/><path d="M6 10a6 6 0 0 0 12 0"/><path d="M9 7V5M15 7V5"/></svg>制作</div>
+          <div class="t"><svg viewBox="0 0 24 24"><path d="M5 20V11M12 20V5M19 20V14"/></svg>统计</div>
+        </div>
+      </div>
+      <div class="cap"><b>P18 出餐</b> · 计划 vs 实际分列，杜绝"一键全部完成"</div>
+    </div>
+
+    <!-- P25 采购清单 -->
+    <div class="screen">
+      <div class="phone">
+        <div class="p-status"><span>9:41</span><span class="icons">▪▪▪</span></div>
+        <div class="p-nav left"><span>采购清单</span><span class="r">10 月 26 日 · 晚餐</span></div>
+        <div class="p-body">
+          <div class="card flat" style="padding:8px 10px;font-size:9.8px;color:var(--ink-2);">
+            按 3 道菜 · 6 份换算，同名同单位已合并
+          </div>
+
+          <div class="h-sec">蔬菜</div>
+          <div class="card" style="padding:4px 11px;">
+            <div class="tickline"><span class="tick ok">✓</span><span class="nm">番茄</span><span class="qt">4 个</span></div>
+            <div class="tickline"><span class="tick ok">✓</span><span class="nm">西兰花</span><span class="qt">1 颗</span></div>
+            <div class="tickline"><span class="tick"></span><span class="nm">土豆</span><span class="qt">3 个</span></div>
+            <div class="tickline"><span class="tick"></span><span class="nm">大蒜</span><span class="qt">8 瓣</span></div>
+          </div>
+
+          <div class="h-sec">蛋与肉</div>
+          <div class="card" style="padding:4px 11px;">
+            <div class="tickline"><span class="tick"></span><span class="nm">鸡蛋</span><span class="qt">6 个</span></div>
+            <div class="tickline"><span class="tick"></span><span class="nm">牛里脊</span><span class="qt">200 g</span></div>
+          </div>
+
+          <div class="h-sec">调味</div>
+          <div class="card" style="padding:4px 11px;">
+            <div class="tickline"><span class="tick ok">✓</span><span class="nm">生抽</span><span class="qt">已有</span></div>
+          </div>
+
+          <div class="actionbar">
+            <div class="sum">已备 <b>3</b> / <b>7</b> 项<br>未勾选项保留在清单</div>
+            <span class="btn line">复制清单</span>
+          </div>
+        </div>
+        <div class="p-tab">
+          <div class="t"><svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5.5 9.5V20h13V9.5"/></svg>首页</div>
+          <div class="t on"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h9"/></svg>点菜</div>
+          <div class="t"><svg viewBox="0 0 24 24"><path d="M5 4h11a2 2 0 0 1 2 2v14H7a2 2 0 0 1-2-2z"/><path d="M9 8h6"/></svg>菜谱</div>
+          <div class="t"><svg viewBox="0 0 24 24"><path d="M4 10h16"/><path d="M6 10a6 6 0 0 0 12 0"/><path d="M9 7V5M15 7V5"/></svg>制作</div>
+          <div class="t"><svg viewBox="0 0 24 24"><path d="M5 20V11M12 20V5M19 20V14"/></svg>统计</div>
+        </div>
+      </div>
+      <div class="cap"><b>P25 采购</b> · 按份数换算并按食材合并</div>
+    </div>
+
+    <!-- P12 菜谱详情 -->
+    <div class="screen">
+      <div class="phone">
+        <div class="p-status"><span>9:41</span><span class="icons">▪▪▪</span></div>
+        <div class="p-nav left"><span>菜谱详情</span><span class="r">编辑</span></div>
+        <div class="p-body">
+          <img class="pimg" src="images/dish-2.jpg" alt="">
+          <div>
+            <div style="font-size:13px;font-weight:650;">麻婆豆腐</div>
+            <div class="row" style="margin-top:3px;">
+              <span style="font-size:9.8px;color:var(--muted);">麻 · 鲜香 · 25 分钟 · 2 人份</span>
+            </div>
+          </div>
+
+          <div class="mini-t">营养估算（每份 · 待确认）</div>
+          <div class="nut">
+            <div class="n"><b>320</b><span>kcal</span></div>
+            <div class="n"><b>18g</b><span>蛋白质</span></div>
+            <div class="n"><b>22g</b><span>脂肪</span></div>
+            <div class="n"><b>12g</b><span>碳水</span></div>
+          </div>
+
+          <div class="mini-t">食材（2 人份）</div>
+          <div style="font-size:10px;color:var(--ink-2);line-height:1.65;">
+            嫩豆腐 1 块 · 牛肉末 100 g · 豆瓣酱 1 勺 · 花椒粉 适量 · 蒜苗 2 根
+          </div>
+
+          <div class="mini-t">做法</div>
+          <ol class="steplist">
+            <li>豆腐切块焯水备用。</li>
+            <li>炒香牛肉末与豆瓣酱。</li>
+            <li>加水下豆腐烧 5 分钟。</li>
+            <li>勾芡，撒花椒粉与蒜苗。</li>
+          </ol>
+
+          <div class="actionbar">
+            <span class="btn line">收藏</span>
+            <span class="btn" style="flex:1;text-align:center;">加入点菜清单</span>
+          </div>
+        </div>
+        <div class="p-tab">
+          <div class="t"><svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5.5 9.5V20h13V9.5"/></svg>首页</div>
+          <div class="t"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h9"/></svg>点菜</div>
+          <div class="t on"><svg viewBox="0 0 24 24"><path d="M5 4h11a2 2 0 0 1 2 2v14H7a2 2 0 0 1-2-2z"/><path d="M9 8h6"/></svg>菜谱</div>
+          <div class="t"><svg viewBox="0 0 24 24"><path d="M4 10h16"/><path d="M6 10a6 6 0 0 0 12 0"/><path d="M9 7V5M15 7V5"/></svg>制作</div>
+          <div class="t"><svg viewBox="0 0 24 24"><path d="M5 20V11M12 20V5M19 20V14"/></svg>统计</div>
+        </div>
+      </div>
+      <div class="cap"><b>P12 菜谱</b> · 营养块明确标注基准与待确认状态</div>
+    </div>
+
+    <!-- P19 统计 -->
+    <div class="screen">
+      <div class="phone">
+        <div class="p-status"><span>9:41</span><span class="icons">▪▪▪</span></div>
+        <div class="p-nav left"><span>饮食统计</span><span class="r">近 7 天</span></div>
+        <div class="p-body">
+          <div class="seg"><span class="s on">家庭</span><span class="s">我的</span></div>
+
+          <div class="card" style="padding:9px 11px;">
+            <div class="mini-t" style="margin-bottom:5px;">菜品被点次数（按出餐记录）</div>
+            <div class="brow"><span>番茄炒蛋</span><span class="tr"><i style="width:100%"></i></span><span class="vv">5</span></div>
+            <div class="brow"><span>酸辣土豆丝</span><span class="tr"><i style="width:82%"></i></span><span class="vv">4</span></div>
+            <div class="brow"><span>麻婆豆腐</span><span class="tr"><i style="width:55%"></i></span><span class="vv">3</span></div>
+            <div class="brow"><span>蒜蓉西兰花</span><span class="tr"><i style="width:38%"></i></span><span class="vv">2</span></div>
+          </div>
+
+          <div class="card" style="padding:9px 11px;">
+            <div class="row">
+              <div style="flex:none;width:78px;height:78px;">
+                <svg viewBox="0 0 80 80" style="width:100%;height:100%;">
+                  <circle cx="40" cy="40" r="26" fill="none" stroke="#eef1ef" stroke-width="13"/>
+                  <circle cx="40" cy="40" r="26" fill="none" stroke="#2e7d5b" stroke-width="13"
+                    stroke-dasharray="98 165" stroke-dashoffset="0" transform="rotate(-90 40 40)"/>
+                  <circle cx="40" cy="40" r="26" fill="none" stroke="#9ec9b3" stroke-width="13"
+                    stroke-dasharray="60 165" stroke-dashoffset="-98" transform="rotate(-90 40 40)"/>
+                  <circle cx="40" cy="40" r="26" fill="none" stroke="#cfe4d8" stroke-width="13"
+                    stroke-dasharray="40 165" stroke-dashoffset="-158" transform="rotate(-90 40 40)"/>
+                  <text x="40" y="37" text-anchor="middle" font-size="8" fill="#8b9490">共</text>
+                  <text x="40" y="48" text-anchor="middle" font-size="11" font-weight="700" fill="#1d211e">21</text>
+                </svg>
+              </div>
+              <div style="flex:1;font-size:9.6px;color:var(--ink-2);line-height:1.75;">
+                <div><span style="display:inline-block;width:7px;height:7px;border-radius:2px;background:#2e7d5b;margin-right:4px;"></span>晚餐 11 次</div>
+                <div><span style="display:inline-block;width:7px;height:7px;border-radius:2px;background:#9ec9b3;margin-right:4px;"></span>午餐 7 次</div>
+                <div><span style="display:inline-block;width:7px;height:7px;border-radius:2px;background:#cfe4d8;margin-right:4px;"></span>早餐 3 次</div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="mini-t">一周吃了什么</div>
+            <div class="weekgrid">
+              <div></div><div class="h">一</div><div class="h">二</div><div class="h">三</div><div class="h">四</div><div class="h">五</div><div class="h">六</div><div class="h">日</div>
+              <div class="rl">早</div><div class="c">粥</div><div class="c">豆浆</div><div class="c">包子</div><div class="c">燕麦</div><div class="c">吐司</div><div class="c">面</div><div class="c">粥</div>
+              <div class="rl">午</div><div class="c">番茄</div><div class="c">麻婆</div><div class="c">土豆丝</div><div class="c">鸡翅</div><div class="c">番茄</div><div class="c">西兰花</div><div class="c">红烧</div>
+              <div class="rl">晚</div><div class="c">西兰花</div><div class="c">土豆丝</div><div class="c">番茄</div><div class="c">麻婆</div><div class="c">红烧</div><div class="c">鸡翅</div><div class="c">番茄</div>
+            </div>
+          </div>
+
+          <div class="note" style="margin:0;padding:8px 10px;font-size:9.5px;">
+            统计口径：仅计入已确认出餐的菜品；份数按实际出餐份数计算。
+          </div>
+        </div>
+        <div class="p-tab">
+          <div class="t"><svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5.5 9.5V20h13V9.5"/></svg>首页</div>
+          <div class="t"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h9"/></svg>点菜</div>
+          <div class="t"><svg viewBox="0 0 24 24"><path d="M5 4h11a2 2 0 0 1 2 2v14H7a2 2 0 0 1-2-2z"/><path d="M9 8h6"/></svg>菜谱</div>
+          <div class="t"><svg viewBox="0 0 24 24"><path d="M4 10h16"/><path d="M6 10a6 6 0 0 0 12 0"/><path d="M9 7V5M15 7V5"/></svg>制作</div>
+          <div class="t on"><svg viewBox="0 0 24 24"><path d="M5 20V11M12 20V5M19 20V14"/></svg>统计</div>
+        </div>
+      </div>
+      <div class="cap"><b>P19 统计</b> · 家庭与个人视角分离，口径写在页面上</div>
+    </div>
+
+    <!-- P16 制作列表 -->
+    <div class="screen">
+      <div class="phone">
+        <div class="p-status"><span>9:41</span><span class="icons">▪▪▪</span></div>
+        <div class="p-nav left"><span>制作</span><span class="r">今天</span></div>
+        <div class="p-body">
+          <div class="seg"><span class="s on">待接单</span><span class="s">制作中</span><span class="s">已完成</span></div>
+
+          <div class="card stack tight">
+            <div class="row">
+              <span style="font-weight:620;font-size:12px;">晚餐 · 3 道菜</span>
+              <span class="badge wait">待接单</span>
+            </div>
+            <div style="font-size:10px;color:var(--muted);">番茄炒蛋 4 份 · 青椒炒肉 2 份 · 米饭 3 份</div>
+            <div style="font-size:10px;color:var(--ink-2);">预计 42 分钟 · 1 份不放辣</div>
+            <div class="row" style="margin-top:4px;">
+              <span style="font-size:9.6px;color:var(--muted);">共 9 份</span>
+              <span class="btn sm">接单并负责制作</span>
+            </div>
+          </div>
+
+          <div class="card stack tight">
+            <div class="row">
+              <span style="font-weight:620;font-size:12px;">加餐 · 酸奶水果</span>
+              <span class="badge wait">待接单</span>
+            </div>
+            <div style="font-size:10px;color:var(--muted);">酸奶 2 份 · 水果拼盘 1 份</div>
+            <div class="row" style="margin-top:4px;">
+              <span style="font-size:9.6px;color:var(--muted);">预计 5 分钟</span>
+              <span class="btn sm">接单</span>
+            </div>
+          </div>
+
+          <div class="card stack tight">
+            <div class="row">
+              <span style="font-weight:620;font-size:12px;">午餐 · 番茄炒蛋 等 3 道</span>
+              <span class="badge doing">制作中</span>
+            </div>
+            <div style="font-size:10px;color:var(--muted);">负责人 我 · 已完成 2 / 4</div>
+            <div class="prog" style="margin-top:4px;"><i style="width:50%"></i></div>
+          </div>
+
+          <div class="note" style="margin:0;padding:8px 10px;font-size:9.5px;">
+            接单后即成为该任务负责人。若已被其他成员接单，页面会提示并刷新。
+          </div>
+        </div>
+        <div class="p-tab">
+          <div class="t"><svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5.5 9.5V20h13V9.5"/></svg>首页</div>
+          <div class="t"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h9"/></svg>点菜</div>
+          <div class="t"><svg viewBox="0 0 24 24"><path d="M5 4h11a2 2 0 0 1 2 2v14H7a2 2 0 0 1-2-2z"/><path d="M9 8h6"/></svg>菜谱</div>
+          <div class="t on"><svg viewBox="0 0 24 24"><path d="M4 10h16"/><path d="M6 10a6 6 0 0 0 12 0"/><path d="M9 7V5M15 7V5"/></svg>制作</div>
+          <div class="t"><svg viewBox="0 0 24 24"><path d="M5 20V11M12 20V5M19 20V14"/></svg>统计</div>
+        </div>
+      </div>
+      <div class="cap"><b>P16 制作列表</b> · 谁接单谁制作，接单即定责</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ 7 ============ -->
+<section id="s7">
+  <h2><span class="num">07</span>关键页面交互要求</h2>
+  <p class="sec-note">只写会影响开发判断的规则，不重复 UI 通用规范。</p>
+
+  <div class="specs">
+    <h4>全局</h4>
+    <ul>
+      <li>主按钮固定在底部安全区，不遮挡内容；所有提交显示加载态，防连点重复请求。</li>
+      <li>网络失败保留已填写草稿；返回时恢复未提交的选择。</li>
+      <li>同一状态在不同页面必须使用同一名称与颜色。</li>
+      <li>删除、撤销、取消、确认出餐等操作需二次确认。</li>
+      <li>空页面必须给出下一步动作，例如"还没有菜谱，创建第一道菜"。</li>
+    </ul>
+
+    <h4>首页（P03）</h4>
+    <ul>
+      <li>顺序：日期与成员 → 四个餐次状态卡 → 待处理事项 → 快捷操作 → 最近出餐。</li>
+      <li>优先突出"现在该做什么"，不把统计图表塞进首页。</li>
+      <li>未提交的成员按"进度"表达，不标记为异常或错误。</li>
+    </ul>
+
+    <h4>点菜（P07 / P08）</h4>
+    <ul>
+      <li>卡片主体进详情，数量控件只负责加减份数，互不干扰。</li>
+      <li>清单与菜谱列表共享同一份页面状态，来回切换不丢选择。</li>
+      <li>份数为非负整数，至少一道菜且份数 ≥ 1 才能提交。</li>
+      <li>支持"多人共享"标记，并填写预期共享人数或总制作份数。</li>
+      <li>切换日期或餐次时提示是否保存当前草稿。</li>
+      <li>若服务端返回已锁定，前端重新拉取状态，并保留未提交的变更供查看。</li>
+      <li>勾选命中本人过敏原的菜品时，卡片上给出提示但<strong>不阻断</strong>；提示文案随菜品变化，不弹全局弹窗。</li>
+    </ul>
+
+    <h4>汇总（P10）</h4>
+    <ul>
+      <li>必须同时表达三件事：谁点了什么、总共要做多少、哪些要求不能合并。</li>
+      <li>「确认菜单并开始制作」是一个业务事务，不是两个前端请求；<strong>按钮仅对家庭创建者可见可用</strong>，其他成员看到的是"等待创建者确认"。</li>
+      <li>口味冲突时给出提示，由厨师选择分锅或统一制作后分配，不静默丢备注。</li>
+      <li>确认后页面不再出现"添加菜品"入口；如需补菜，引导至"新建加餐"。</li>
+    </ul>
+
+    <h4>制作（P16 / P17 / P18）</h4>
+    <ul>
+      <li>制作详情优先展示菜名、总份数、食材与步骤；成员需求、备注、营养放次级区域。</li>
+      <li>接单按钮文案明确责任：「接单并负责制作」。</li>
+      <li>每完成一道菜即时打勾并显示已完成 / 剩余；全部必需菜品完成后才开放出餐确认。</li>
+      <li>确认出餐后禁止普通用户直接改历史记录；数量纠错走带原因的修正流程并留审计。</li>
+    </ul>
+
+    <h4>菜谱（P12 / P13）</h4>
+    <ul>
+      <li>信息层次：图与名 → 标签 → 时长/难度/适用餐次 → 营养摘要 → 食材 → 步骤 → 成员备注。</li>
+      <li>食材用量与默认份数关联，调整份数时展示按比例换算的参考用量。</li>
+      <li>两人同时编辑同一菜谱时使用版本号/ETag，后提交者不得静默覆盖。</li>
+      <li>菜谱列表默认只显示「可用」，提供「已归档」入口查看与恢复；归档不提供删除，避免历史订单出现空引用。</li>
+    </ul>
+
+    <h4>统计（P19 / P20）</h4>
+    <ul>
+      <li>家庭视角与个人视角分开，不混为一谈。</li>
+      <li>每个图表标注时间范围、单位与口径（按提交次数还是按出餐次数）。</li>
+      <li>点了两份不代表全由本人吃掉；出餐了也不代表每位成员都吃了。</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============ 8 ============ -->
+<section id="s8">
+  <h2><span class="num">08</span>业务规则与状态机</h2>
+  <p class="sec-note">界面可以迭代，但状态与并发规则一旦设计错，返工成本最高。本节是全系统唯一定义。</p>
+
+  <h3>8.1 餐次状态</h3>
+  <table>
+    <tr><th>状态</th><th>进入条件</th><th>允许的操作</th></tr>
+    <tr><td>未开始</td><td>尚未开放点菜或无任何点菜活动</td><td>发起点菜</td></tr>
+    <tr><td>点菜中</td><td>允许成员提交、修改个人点菜单</td><td>提交 / 修改 / 撤销本人点菜单</td></tr>
+    <tr><td>待制作</td><td>汇总确认后进入制作阶段，点菜单锁定</td><td>认领制作任务</td></tr>
+    <tr><td>制作中</td><td>至少一个制作任务已开始</td><td>逐菜完成、登记异常</td></tr>
+    <tr><td>部分出餐</td><td>部分菜品已完成出餐，仍有必需任务未完成</td><td>继续制作、部分确认</td></tr>
+    <tr><td>已出餐</td><td>全部必需任务完成并确认出餐</td><td>只读回看</td></tr>
+    <tr><td>已取消</td><td>整个餐次取消</td><td>只读回看，不计入统计</td></tr>
+  </table>
+  <p><strong>加餐不限次数：</strong>早餐、午餐、晚餐各一天一个；<strong>加餐可创建多个</strong>（如下午茶 + 夜宵），每个加餐是独立餐次，各自点菜、汇总、制作、出餐，互不影响。</p>
+  <p>餐次状态与制作任务状态<strong>分开维护</strong>；页面不自行推导状态，必须读取服务端返回的餐次状态。</p>
+
+  <h3>8.2 个人点菜单状态</h3>
+  <table>
+    <tr><th>状态</th><th>可修改人</th><th>说明</th></tr>
+    <tr><td>草稿</td><td>仅本人</td><td>未提交，可自由增删</td></tr>
+    <tr><td>已提交</td><td>仅本人</td><td>已进入家庭汇总，可继续修改</td></tr>
+    <tr><td>已锁定</td><td>无人可直接改</td><td>制作阶段开始后锁定，需走变更流程</td></tr>
+    <tr><td>已完成归档</td><td>—</td><td>餐次结束，保留历史快照</td></tr>
+    <tr><td>已取消</td><td>本人（锁定前）</td><td>不计入有效订单与统计</td></tr>
+  </table>
+  <p>A 在其他成员已提交后修改自己的菜单时，只重算汇总，<strong>不得改动其他人</strong>的点菜单。</p>
+
+  <h3>8.3 制作任务状态</h3>
+  <table>
+    <tr><th>状态</th><th>进入条件</th><th>约束</th></tr>
+    <tr><td>待接单</td><td>汇总确认后生成</td><td>家庭成员均可认领；并发下仅一个成功</td></tr>
+    <tr><td>已接单</td><td>认领成功</td><td>接单人为负责人；可开始制作</td></tr>
+    <tr><td>制作中</td><td>负责人点开始制作</td><td>他人不可直接接管，除非显式转交</td></tr>
+    <tr><td>已完成</td><td>全部必需菜品完成</td><td>不可由普通操作改回制作中</td></tr>
+    <tr><td>异常（取消 / 失败 / 部分完成）</td><td>登记异常</td><td>必须记录原因、处理人、时间</td></tr>
+  </table>
+  <p><strong>「谁接单谁制作」</strong>的含义是：接单人是该任务的负责人，其他人仍可协助，但第一版只需保证负责人明确。</p>
+
+  <h3>8.4 多人点菜汇总规则</h3>
+  <table>
+    <tr><th>菜品</th><th>成员 A</th><th>成员 B</th><th>成员 C</th><th>汇总需求</th></tr>
+    <tr><td>番茄炒蛋</td><td>1</td><td>1</td><td>2</td><td>4</td></tr>
+    <tr><td>青椒炒肉</td><td>1</td><td>0</td><td>1</td><td>2</td></tr>
+    <tr><td>米饭</td><td>1</td><td>1</td><td>1</td><td>3</td></tr>
+  </table>
+  <ul>
+    <li>同一菜谱、同一制作规格的需求可合并。</li>
+    <li>规格或口味要求不一致时，拆成不同制作明细，或明确提示厨师。</li>
+    <li>总份数必须等于<strong>有效</strong>个人需求之和。</li>
+    <li>删除某成员需求时，只扣减该成员对应份数。</li>
+    <li>已开始制作后发生的变更不得静默改写原任务，需走追加/变更。</li>
+    <li>汇总更新与接单必须由服务端事务或等价并发控制保证。</li>
+  </ul>
+  <div class="note warn">
+    <div class="nt">菜品合并不等于备注合并</div>
+    一份不辣、一份加辣可归属同一菜谱，但制作任务必须保留各自要求，由系统提示"分锅制作"或"统一制作后分配"，不能直接丢备注。
+  </div>
+
+  <h3>8.5 点菜截止与制作开始</h3>
+  <ul>
+    <li>采用<strong>手动确认汇总</strong>：由成员确认需求已齐后点「确认菜单并开始制作」，不做定时截止。</li>
+    <li><strong>仅家庭创建者</strong>有权执行确认。普通成员只能提交与修改自己的点菜单。</li>
+    <li>确认后锁定相关点菜单并生成制作任务；<strong>不开放追加</strong>。想补菜请新建一个「加餐」餐次，走完整点菜流程。</li>
+    <li>确认前若存在口味冲突，页面提示但<strong>不阻断</strong>确认，由创建者判断是否先沟通。</li>
+  </ul>
+  <div class="note warn">
+    <div class="nt">需要注意的单点风险</div>
+    确认权限收敛到创建者后，创建者不在线时餐次会停在「点菜中」无法进入制作。缓解方式有两个，可后续择一：创建者把权限转移给在家的成员，或增加「创建者可预先授权某人代确认」。当前版本按"仅创建者"执行。
+  </div>
+
+  <h3>8.6 营养与实际摄入</h3>
+  <p>营养统计用三层数据：<strong>菜谱营养估算</strong> → <strong>实际出餐份数</strong> → <strong>个人实际食用份额</strong>。</p>
+  <div class="note">
+    估算 300 kcal/份的菜做了 4 份，成员 A 只吃了 0.5 份 → A 的估算摄入是 150 kcal，而不是 300 或 1200。
+  </div>
+  <ul>
+    <li>第一版以"点菜份数"作为个人摄入份额参考，界面标注「按点菜份数估算」。</li>
+    <li>后续增加「调整实际食用量」后，再升级为更贴近真实的摄入记录。</li>
+    <li>营养值一律为估值，不做医学级承诺；AI 估算必须经人工确认后才参与统计。</li>
+  </ul>
+
+  <h3>8.7 菜谱归档与「时令菜」</h3>
+  <p><strong>归档是什么：</strong>归档 = 把菜谱<strong>停用但不删除</strong>。数据完整保留，历史点菜、出餐记录与统计中的引用都不受影响，随时可以一键恢复为可用。它替代了"直接删除"，避免历史数据出现空洞。</p>
+  <table>
+    <tr><th>状态</th><th>含义</th><th>是否进入点菜候选 / 随机抽菜</th></tr>
+    <tr><td>可用 active</td><td>正常在库，可被点选</td><td>是</td></tr>
+    <tr><td>已归档 archived</td><td>停用但保留，可在「已归档」列表查看与恢复</td><td><strong>否</strong></td></tr>
+    <tr><td>时令 seasonal（P1）</td><td>设置了供应月份区间，非供应期自动按归档处理</td><td>仅在供应月份内</td></tr>
+  </table>
+  <p><strong>两个典型场景：</strong></p>
+  <ul>
+    <li><strong>不再常做：</strong>某道菜吃腻了或季节不合适，先归档，看不见但不丢；哪天想吃了再恢复。</li>
+    <li><strong>时令菜（你举的例子，完全成立）：</strong>春天的香椿炒蛋、夏天的凉面。春季恢复上架可点，夏天到了归档停售，菜谱仍然存着，明年春天从归档里取出来继续用。这就是归档最实用的价值。</li>
+  </ul>
+  <p>如果希望"到季节自动上架、过季自动下架"，在菜谱上维护<strong>供应月份区间</strong>即可（REC-11，P1）；在此之前用手动归档/恢复也完全够用。</p>
+  <p class="sec-note">归档不影响历史：已归档菜谱仍会出现在旧订单的菜品快照中，统计照常计入历史出餐记录。</p>
+
+  <h3>8.8 忌口与过敏档案</h3>
+  <table>
+    <tr><th>字段</th><th>说明</th><th>点菜时表现</th></tr>
+    <tr><td>过敏原</td><td>如花生、海鲜、牛奶、牛肉；属安全项，需显式标记</td><td>命中时卡片显示「含牛肉 · 与我的忌口冲突」</td></tr>
+    <tr><td>忌口项</td><td>如不吃香菜、不吃辣、少油；属偏好项</td><td>命中时提示，不阻断</td></tr>
+    <tr><td>备注</td><td>自由文本补充</td><td>随个人点菜单进入汇总</td></tr>
+  </table>
+  <ul>
+    <li>提示<strong>不阻断</strong>点菜：由本人决定是否仍要这道菜，系统只负责让人知情。</li>
+    <li>汇总页与制作任务详情<strong>高亮全部成员的禁忌</strong>，避免厨师误放。</li>
+    <li>命中依赖菜谱食材已结构化；食材名做同义词映射（如"牛里脊 / 牛肉"）。映射不到时宁可不提示，也不误报。</li>
+    <li>仅作家庭内提醒，不构成医学建议；不提供给第三方。</li>
+  </ul>
+
+  <h3>8.9 食材采购清单</h3>
+  <ul>
+    <li><strong>生成时机：</strong>创建者确认菜单、生成汇总时一并生成，挂在餐次下，之后随时可查看。</li>
+    <li><strong>换算公式：</strong>食材用量 = 菜谱基准用量 ÷ 基准份数 × 该菜总份数。</li>
+    <li><strong>合并规则：</strong>同名且同单位的食材相加；单位不同（如"1 颗"与"200 g"）不强行合并，分行列出。</li>
+    <li><strong>精度：</strong>可数项向上取整到可购买单位（1.5 个 → 2 个）；重量保留到 10 g。</li>
+    <li><strong>勾选已备</strong>只改变清单状态，不回写汇总份数，也不影响已生成的制作任务。</li>
+    <li>清单基于<strong>汇总快照</strong>生成，菜谱后续修改不影响本餐已生成的清单。</li>
+  </ul>
+</section>
+
+<!-- ============ 9 ============ -->
+<section id="s9">
+  <h2><span class="num">09</span>数据模型</h2>
+  <p class="sec-note">关系型数据库（PostgreSQL / MySQL）。只有三人，但一致性比并发更重要。</p>
+
+  <h3>9.1 用户与家庭</h3>
+  <table>
+    <tr><th>表</th><th>关键字段</th><th>用途</th></tr>
+    <tr><td><code>users</code></td><td>id, openid, nickname, avatar_url</td><td>身份与资料，openid 在小程序范围内唯一</td></tr>
+    <tr><td><code>households</code></td><td>id, name, owner_user_id, timezone</td><td>家庭空间与默认时区</td></tr>
+    <tr><td><code>household_members</code></td><td>id, household_id, user_id, role, status</td><td>成员关系，<code>(household_id, user_id)</code> 唯一</td></tr>
+    <tr><td><code>household_invites</code></td><td>id, household_id, code_hash, expires_at, max_uses</td><td>邀请码，存哈希不存明文</td></tr>
+    <tr><td><code>member_dietary_profiles</code></td><td>id, household_id, user_id, allergens, avoidances, note</td><td>忌口与过敏档案，一人一条</td></tr>
+  </table>
+
+  <h3>9.2 菜谱与营养</h3>
+  <table>
+    <tr><th>表</th><th>关键字段</th><th>用途</th></tr>
+    <tr><td><code>recipes</code></td><td>id, household_id, name, image_url, description, base_servings, prep_minutes, cook_minutes, status, archived_at, season_months, version</td><td>菜谱主信息；status 为 active / archived / seasonal</td></tr>
+    <tr><td><code>recipe_ingredients</code></td><td>id, recipe_id, name, quantity, unit, sort_order</td><td>结构化食材与用量</td></tr>
+    <tr><td><code>recipe_steps</code></td><td>id, recipe_id, step_no, content, image_url</td><td>制作步骤</td></tr>
+    <tr><td><code>tags</code></td><td>id, household_id, name, category</td><td>标签定义（风味/类型/难度）</td></tr>
+    <tr><td><code>recipe_tags</code></td><td>recipe_id, tag_id</td><td>关联，<code>(recipe_id, tag_id)</code> 唯一</td></tr>
+    <tr><td><code>recipe_nutrition</code></td><td>recipe_id, basis_type, basis_quantity, energy_kcal, protein_g, fat_g, carbohydrate_g, fiber_g, sodium_mg, source</td><td>营养估算；<strong>必须带计量基准</strong></td></tr>
+    <tr><td><code>recipe_favorites</code></td><td>user_id, recipe_id, created_at</td><td>个人收藏</td></tr>
+  </table>
+  <p class="sec-note">营养不能只存一个热量数值而不存单位与基准；后续扩展钙铁钾等，用通用营养素明细表，而不是不断加列。</p>
+
+  <h3>9.3 餐次与个人点菜</h3>
+  <table>
+    <tr><th>表</th><th>关键字段</th><th>用途</th></tr>
+    <tr><td><code>meal_sessions</code></td><td>id, household_id, meal_date, meal_type, seq, status, cutoff_at, confirmed_at</td><td><code>(household_id, meal_date, meal_type, seq)</code> 唯一；早/中/晚 seq=0，加餐 seq 从 1 递增</td></tr>
+    <tr><td><code>personal_orders</code></td><td>id, meal_session_id, user_id, status, submitted_at, note, version</td><td><code>(meal_session_id, user_id)</code> 唯一</td></tr>
+    <tr><td><code>personal_order_items</code></td><td>id, personal_order_id, recipe_id, recipe_version, recipe_name_snapshot, quantity, is_shared, note, nutrition_snapshot</td><td>点菜明细与快照</td></tr>
+    <tr><td><code>meal_aggregates</code></td><td>id, meal_session_id, status, version, confirmed_by, confirmed_at</td><td>餐次汇总单（每餐一张）</td></tr>
+  </table>
+
+  <h3>9.4 制作任务与出餐</h3>
+  <table>
+    <tr><th>表</th><th>关键字段</th><th>用途</th></tr>
+    <tr><td><code>production_tasks</code></td><td>id, meal_aggregate_id, assignee_user_id, status, accepted_at, started_at, completed_at, version</td><td>任务容器，认领用条件更新</td></tr>
+    <tr><td><code>production_task_items</code></td><td>id, production_task_id, recipe_id, recipe_name_snapshot, quantity, specification_snapshot, status</td><td>菜品级明细与状态</td></tr>
+    <tr><td><code>production_task_sources</code></td><td>task_item_id, personal_order_item_id, quantity</td><td>追溯到"谁的几份"，汇总依据</td></tr>
+    <tr><td><code>serving_records</code></td><td>id, meal_session_id, production_task_id, recipe_id, planned_quantity, actual_quantity, served_at, recorded_by</td><td>实际出餐记录</td></tr>
+    <tr><td><code>shopping_lists</code></td><td>id, household_id, meal_session_id, generated_at, generated_by</td><td>采购清单头，一餐一张</td></tr>
+    <tr><td><code>shopping_list_items</code></td><td>id, shopping_list_id, ingredient_name, quantity, unit, category, is_ready, sort_order</td><td>合并后的食材项与已备状态</td></tr>
+    <tr><td><code>nutrition_intakes</code></td><td>id, serving_record_id, user_id, recipe_id, consumed_quantity, energy_kcal, protein_g, fat_g, carbohydrate_g</td><td>个人实际摄入</td></tr>
+    <tr><td><code>notifications</code></td><td>id, household_id, user_id, type, payload, dedupe_key, status, sent_at</td><td>通知与投递，dedupe_key 防重</td></tr>
+    <tr><td><code>audit_logs</code></td><td>id, household_id, actor_user_id, action, target_type, target_id, reason, created_at</td><td>关键操作审计</td></tr>
+  </table>
+
+  <h3>9.5 核心约束</h3>
+  <table>
+    <tr><th>对象</th><th>约束</th><th>目的</th></tr>
+    <tr><td>用户</td><td>openid 在小程序应用范围内唯一</td><td>防重复用户</td></tr>
+    <tr><td>家庭成员</td><td>(household_id, user_id) 唯一</td><td>同一用户不重复加入同一家庭</td></tr>
+    <tr><td>餐次</td><td>(household_id, meal_date, meal_type, seq) 唯一</td><td>早/中/晚各一条；加餐可多条，靠 seq 区分</td></tr>
+    <tr><td>个人点菜单</td><td>(meal_session_id, user_id) 唯一</td><td>每人每餐一份有效单</td></tr>
+    <tr><td>点菜明细</td><td>quantity &gt; 0 且单位明确</td><td>杜绝无效数量</td></tr>
+    <tr><td>任务认领</td><td>条件更新或行锁</td><td>防止重复接单</td></tr>
+    <tr><td>任务来源</td><td>来源明细与目标明细必须关联</td><td>保证汇总可追溯</td></tr>
+    <tr><td>出餐记录</td><td>必须关联有效餐次与制作任务</td><td>防跨餐次错误</td></tr>
+    <tr><td>营养数据</td><td>数值非负，单位与基准必填</td><td>避免口径混乱</td></tr>
+    <tr><td>通知投递</td><td>dedupe_key 唯一</td><td>防重复发送</td></tr>
+  </table>
+  <p class="sec-note">以上必须在数据库层实现，不能只依赖前端表单校验。</p>
+</section>
+
+<!-- ============ 10 ============ -->
+<section id="s10">
+  <h2><span class="num">10</span>共享规则</h2>
+  <p class="sec-note">跨模块复用的唯一定义，功能章节只引用。</p>
+
+  <h3>10.1 通知</h3>
+  <table>
+    <tr><th>事件</th><th>接收人</th><th>通道</th></tr>
+    <tr><td>制作任务生成</td><td>全体家庭成员</td><td>站内通知（P0）+ 微信订阅消息（P1）</td></tr>
+    <tr><td>任务被认领</td><td>其他家庭成员</td><td>站内通知</td></tr>
+    <tr><td>单道菜完成</td><td>该菜的点选人</td><td>站内通知（可合并，不逐道推送）</td></tr>
+    <tr><td>确认出餐</td><td>全体家庭成员</td><td>站内通知 + 微信订阅消息</td></tr>
+    <tr><td>餐次被取消 / 菜品异常</td><td>相关成员</td><td>站内通知</td></tr>
+  </table>
+  <p class="sec-note">通知不得在业务事务内直接调用微信接口：先在事务中写入待发事件，提交成功后再由后台任务投递，失败可重试。</p>
+
+  <div class="note warn">
+    <div class="nt">关于"登录时授权一次、此后无需再次授权"，技术上做不到</div>
+    已核实的微信小程序规则：<strong>一次性订阅</strong>是"授权一次只能下发一条"，用户勾选「总是保持以上选择，不再询问」只是下次调用时不再弹窗，<strong>并不等于永久免授权</strong>——每次调用仍只增加 1 条下发额度；且同一用户在同一 scene 场景值下的多次授权不累积，需要多条必须使用不同 scene 值。<strong>长期订阅</strong>（授权一次可长期下发多条）只开放给特定线下公共服务类目，家庭工具申请不到。旧的模板消息能力也已不再对小程序开放。
+  </div>
+
+  <p><strong>因此通知按以下四层落地：</strong></p>
+  <ol>
+    <li><strong>站内通知为必达基础通道（P0）：</strong>通知中心列表 + 首页待处理角标，完全不依赖用户授权，任何事件都先保证有一条站内记录。</li>
+    <li><strong>登录时请求订阅授权：</strong>首次进入时一次性申请「新任务」「已接单」「已出餐」等模板，并用「总是保持以上选择」把后续打扰降到最低——用户侧表现为"以后不再弹窗"。</li>
+    <li><strong>关键动作处静默累积额度：</strong>在提交点菜、确认菜单、接单、开始制作、确认出餐等动作后顺带调用订阅接口，每次 +1 条额度。用户不会看到额外弹窗，但额度会被持续补充。</li>
+    <li><strong>额度记账与降级：</strong>记录每种模板的剩余可下发条数；额度不足时自动降级为站内通知，并在页面提示"开启提醒可收到微信通知"，绝不假装已发送。</li>
+  </ol>
+  <p class="sec-note">可选增强：用户主动与小程序客服会话后 48 小时内可用客服消息补发（P1，需用户先发起会话）。</p>
+
+  <h3>10.2 快照与版本</h3>
+  <ul>
+    <li>点菜明细保存菜谱快照（名称、份量、营养、食材、步骤），菜谱后续修改或归档不影响历史。</li>
+    <li>汇总单保存汇总快照，制作任务保存规格快照，出餐记录保存实际数量。</li>
+    <li>菜谱、个人点菜单、制作任务均带 <code>version</code>，写操作校验版本，冲突时返回冲突让前端刷新。</li>
+    <li>接单时间、出餐时间、审计时间一律由服务端生成。</li>
+  </ul>
+
+  <h3>10.3 并发控制</h3>
+  <table>
+    <tr><th>场景</th><th>手段</th><th>失败表现</th></tr>
+    <tr><td>认领任务</td><td>条件更新（status=pending 且 assignee 为空）</td><td>受影响行数为 0 → 返回"已被他人接单"</td></tr>
+    <tr><td>编辑菜谱</td><td>version / ETag 比对</td><td>返回冲突，提示刷新，不静默覆盖</td></tr>
+    <tr><td>保存点菜单</td><td>version 比对 + 餐次状态校验</td><td>返回冲突或"已锁定"</td></tr>
+    <tr><td>确认菜单</td><td>单事务（校验→锁单→汇总→建任务→事件）</td><td>任一步失败整体回滚，不留半完成状态</td></tr>
+  </table>
+
+  <h3>10.4 存储与外部服务可替换边界</h3>
+  <ul>
+    <li>业务模块只依赖 Repository 接口，不依赖具体 ORM 或数据库方言。</li>
+    <li>文件存储走 S3 兼容适配器，上传用受控临时凭证（presign），不把小程序的长期密钥放在前端。</li>
+    <li>AI 营养估算走独立 <code>NutritionProvider</code> 接口，可替换模型或服务商。</li>
+    <li>微信通知走订阅消息适配器，站内通知始终保留为基础通道。</li>
+    <li>可替换 ≠ 零成本：换库涉及方言、隔离级别、索引与数据迁移；换存储涉及上传授权与访问控制，需单独评估。</li>
+  </ul>
+</section>
+
+<!-- ============ 11 ============ -->
+<section id="s11">
+  <h2><span class="num">11</span>部署形态与运维要求</h2>
+  <p class="sec-note">现状：家庭闲置 Linux 主机承载业务，通过 frp 内网穿透到一台已备案的公网服务器；域名 <code>codis.fun</code> 已完成 ICP 备案。</p>
+
+  <h3>11.1 部署拓扑</h3>
+  <div class="topo">
+    <div class="tier">
+      <div class="box"><b>微信小程序</b><span>页面、交互、本地草稿</span></div>
+      <div class="box"><b>小程序后台域名白名单</b><span>request / uploadFile / downloadFile 三类均指向 https://codis.fun</span></div>
+    </div>
+    <div class="link">HTTPS · 443 · TLS 1.2+（小程序不接受带端口的域名）</div>
+    <div class="tier">
+      <div class="box hl"><b>公网服务器 · codis.fun</b><span>Nginx 反向代理 · TLS 证书 · 备案接入 · frps 服务端</span></div>
+    </div>
+    <div class="link">frp 隧道 · frpc 由家庭主机主动外连，无需公网 IP、无需开放入站端口</div>
+    <div class="tier">
+      <div class="box"><b>家庭 Linux 主机</b><span>业务 API · PostgreSQL · 本地文件/图片</span></div>
+      <div class="box"><b>对象存储（建议）</b><span>菜谱图片，避免占家庭上行带宽</span></div>
+    </div>
+  </div>
+  <p><strong>合规性：</strong>域名解析到公网服务器，备案接入商与实际接入一致；家庭主机不直接对外暴露，也不依赖固定公网 IP。这是本方案的显著优势，不建议改成把域名直接解析到家庭宽带。</p>
+
+  <h3>11.2 关键配置项</h3>
+  <table>
+    <tr><th>位置</th><th>配置项</th><th>要求</th><th>原因</th></tr>
+    <tr><td>Nginx</td><td><code>client_max_body_size</code></td><td>≥ 20m</td><td>默认 1m，上传菜谱图会返回 413</td></tr>
+    <tr><td>Nginx</td><td><code>proxy_read_timeout</code></td><td>≥ 120s</td><td>隧道多一跳，默认 60s 可能截断 AI 估算等慢接口</td></tr>
+    <tr><td>Nginx</td><td><code>proxy_set_header Host $host</code></td><td>必须</td><td>否则后端生成的重定向与图片地址会出错</td></tr>
+    <tr><td>Nginx</td><td>WebSocket Upgrade 头</td><td>按需</td><td>若后续用长连接推送</td></tr>
+    <tr><td>Nginx</td><td>真实 IP</td><td><code>X-Forwarded-For</code></td><td>经 frp 后 <code>X-Real-IP</code> 会失真，限流与审计需依赖转发头</td></tr>
+    <tr><td>证书</td><td>自动续期</td><td>certbot 定时任务</td><td>证书过期会让小程序全线请求失败</td></tr>
+    <tr><td>frpc</td><td><code>login_fail_exit = false</code> + 心跳</td><td>必须</td><td>断网后能自动重连</td></tr>
+    <tr><td>frps</td><td>token、dashboard</td><td>长随机 token；面板不公网开放</td><td>防止隧道被他人利用</td></tr>
+    <tr><td>小程序</td><td>三类合法域名</td><td>全部填 <code>https://codis.fun</code></td><td>漏配 <code>downloadFile</code> 是最常见的"开发者工具正常、真机图片全裂"原因</td></tr>
+  </table>
+
+  <h3>11.3 备份与可用性</h3>
+  <table>
+    <tr><th>事项</th><th>要求</th></tr>
+    <tr><td>数据备份</td><td>每日 <code>pg_dump</code> 到本机外置盘；每周加密同步一份到<strong>异地</strong>（公网服务器或对象存储）。两份都在家里等于没有备份</td></tr>
+    <tr><td>保留策略</td><td>最近 7 日 + 最近 4 周各一层</td></tr>
+    <tr><td>恢复演练</td><td>每季度从备份恢复到临时库并校验一次，避免备份"看起来有、恢复不出来"</td></tr>
+    <tr><td>开机自启</td><td>全部服务由 systemd 托管，容器 <code>restart: always</code>，禁用合盖休眠</td></tr>
+    <tr><td>健康检查</td><td>公网服务器定时探测 <code>/api/v1/health</code>，掉线告警</td></tr>
+    <tr><td>前端降级</td><td>服务不可用时明确提示"服务暂不可用，请稍后重试"，保留本地草稿，不静默失败</td></tr>
+  </table>
+  <div class="note warn">
+    <div class="nt">自托管的固有代价</div>
+    家里断电、断网或硬盘故障都意味着服务中断。三人家庭可以接受短时不可用，但必须用<strong>异地备份 + 健康告警</strong>把"丢数据"和"长时间无人发现"这两件事排除掉。
+  </div>
+
+  <h3>11.4 安全要求</h3>
+  <ul>
+    <li>公网服务器只开放 443 与 SSH（SSH 限密钥、可限 IP），frps 其余端口不对外。</li>
+    <li>API 全量鉴权：服务端解析微信会话并校验家庭成员关系，不信任客户端传入的任何身份参数。</li>
+    <li>图片访问使用带签名的临时 URL，对象存储桶不开放公开读。</li>
+    <li>Nginx 开启基础限流，防止被刷。</li>
+    <li>日志不记录 openid 明文、手机号等敏感字段；家庭主机磁盘加密。</li>
+  </ul>
+
+  <h3>11.5 运营成本</h3>
+  <table>
+    <tr><th>项目</th><th>金额</th><th>说明</th></tr>
+    <tr><td>公网服务器</td><td>已有，¥0 增量</td><td>同时承担备案接入与反向代理</td></tr>
+    <tr><td>域名 codis.fun</td><td>已有，¥0 增量</td><td>已完成备案</td></tr>
+    <tr><td>对象存储</td><td>¥10–30 / 年</td><td>菜谱图片，几 GB 规模</td></tr>
+    <tr><td>电费</td><td>¥50–150 / 年</td><td>家庭主机常开，15–30W</td></tr>
+    <tr><td>AI 营养估算</td><td>¥10–50 / 年</td><td>按菜谱估算并缓存复用，不按点菜次数调用</td></tr>
+    <tr><td><strong>合计</strong></td><td><strong>约 ¥70–230 / 年</strong></td><td>不含已有资产与开发投入</td></tr>
+  </table>
+  <p class="sec-note">真正的持续投入是维护时间：小程序基础库升级、微信接口变更、证书续期、备案年审。</p>
+</section>
+
+<!-- ============ 12 ============ -->
+<section id="s12">
+  <h2><span class="num">12</span>交付阶段</h2>
+  <p class="sec-note">按"先建立可靠记录，再逐步智能化"推进，每阶段可独立验收。状态更新于 2026-10-27（里程碑 M1：阶段 0–3 闭环 + 统计/通知已上线；阶段 4 营养与热量计算暂缓）。</p>
+  <table>
+    <tr><th>阶段</th><th>范围</th><th>完成标志</th><th>状态</th></tr>
+    <tr><td>0 骨架</td><td>小程序框架、登录、家庭创建、设计规范与基础组件；<strong>部署链路打通</strong>（公网反代 + frp + 域名白名单）</td><td>能在真机上完成一次登录与接口往返</td><td>已完成：微信登录、建家庭、邀请码已在公网环境跑通</td></tr>
+    <tr><td>1 家庭与菜谱</td><td>邀请成员、菜谱增删改查、图片上传、标签筛选</td><td>三人可共同维护一套菜谱</td><td>已完成：多图上传（客户端压缩）、标签筛选、归档/恢复</td></tr>
+    <tr><td>2 点菜与汇总</td><td>餐次、个人点菜单、草稿与提交、汇总页、确认菜单</td><td>多人独立点菜后可确认并生成任务</td><td>已完成：早/中/晚 + 加餐多实例、草稿/提交、汇总、创建者确认</td></tr>
+    <tr><td>3 制作与出餐</td><td>任务列表、认领、逐菜完成、出餐确认、站内通知</td><td>一餐从点菜到出餐闭环跑通</td><td>已完成：防重复接单、逐菜完成、全部完成才可出餐、站内通知已接</td></tr>
+    <tr><td>4 营养估算</td><td>AI 估算接入、人工确认、营养快照</td><td>菜谱营养可估可改可确认</td><td>未开始：等确认服务商与单次成本上限（见第 13 节第 4 条）</td></tr>
+    <tr><td>5 统计与推荐</td><td>热门菜、周饮食、餐次分布、营养趋势、随机抽菜、微信通知</td><td>统计口径稳定且图表可回看</td><td>部分完成：热门菜/餐次分布/出餐量/随机抽菜已上线；营养趋势依赖阶段 4；订阅消息通道已留，等模板 ID</td></tr>
+  </table>
+</section>
+
+<!-- ============ 13 ============ -->
+<section id="s13">
+  <h2><span class="num">13</span>仍待确认</h2>
+  <p class="sec-note">本轮已确认的决策全部回填正文；下列 7 条是仍需你拍板的项。</p>
+  <table>
+    <tr><th>#</th><th>问题</th><th>影响</th><th>当前推进假设</th></tr>
+    <tr><td>1</td><td>是否允许成员编辑他人创建的菜谱？</td><td>菜谱一致性与家庭设置项</td><td>仅创建人可改，家庭设置中预留开关</td></tr>
+    <tr><td>2</td><td>是否允许部分出餐（有菜未完成也先出）？</td><td>出餐确认逻辑与异常流程</td><td>默认禁止，必须先登记异常</td></tr>
+    <tr><td>3</td><td>第一版是否就支持"调整实际食用量"？</td><td>营养统计精度与工作量</td><td>第一版按点菜份数估算，界面标注</td></tr>
+    <tr><td>4</td><td>AI 营养估算的服务商与单次成本上限？</td><td>成本与数据合规</td><td>走可替换 Provider，先接一家做验证</td></tr>
+    <tr><td>5</td><td>邀请码默认有效期与使用次数？</td><td>家庭数据安全</td><td>7 天有效、限 3 次</td></tr>
+    <tr><td>6</td><td>多人共享菜的份数如何计入个人摄入？</td><td>营养口径</td><td>按共享人数均摊，标注"估算"</td></tr>
+    <tr><td>7</td><td>创建者不在线时如何确认菜单？（当前仅创建者可确认）</td><td>餐次能否进入制作阶段</td><td>先靠转移创建者解决；后续可加"预授权代确认"</td></tr>
+  </table>
+</section>
+
+<footer class="doc">
+  家庭餐桌 · PRD 1.1（2026-10-26）· 原型为静态规格示意，用于确定层级、信息密度与组件类型，非已接入业务数据的可运行小程序。标注 <span class="tbd">待定</span> 的条目需确认后回填正文。
+</footer>
+</main>
+</div>
+</body>
+</html>

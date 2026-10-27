@@ -1,0 +1,11 @@
+# 公网服务器端
+bindPort = 7000
+
+# 只在本机暴露隧道端口，供 Nginx 反代；不对外开放
+proxyBindAddr = "127.0.0.1"
+
+auth.method = "token"
+# 必须替换为长随机串
+auth.token = "CHANGE_ME_TO_A_LONG_RANDOM_TOKEN"
+
+transport.maxPoolCount = 5

@@ -1,0 +1,14 @@
+{
+  "name": "cooking-client",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "build:mp": "tsc -p tsconfig.build.json",
+    "watch:mp": "tsc -w -p tsconfig.build.json"
+  },
+  "devDependencies": {
+    "miniprogram-api-typings": "^5.2.0",
+    "typescript": "^5.6.0"
+  }
+}

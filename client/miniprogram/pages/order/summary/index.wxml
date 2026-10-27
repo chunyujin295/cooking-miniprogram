@@ -1,0 +1,49 @@
+<view class="page" wx:if="{{detail}}">
+  <view class="head">
+    <view class="title">{{title}}</view>
+    <view class="tag">{{statusLabel}}</view>
+  </view>
+
+  <view wx:if="{{error}}" class="error">{{error}}</view>
+
+  <view class="card section">
+    <view class="section-title">各人点菜</view>
+    <view wx:if="{{!orderRows.length}}" class="muted">还没有人提交点菜</view>
+    <view wx:for="{{orderRows}}" wx:key="userId" class="member-block">
+      <view class="member-head">
+        <text>{{item.memberName}}</text>
+        <text class="chip {{item.statusLabel === '已提交' || item.statusLabel === '已确认' ? 'on' : ''}}">
+          {{item.statusLabel}}
+        </text>
+      </view>
+      <view wx:for="{{item.items}}" wx:for-item="dish" wx:key="name" class="dish-row">
+        <text>{{dish.name}}</text>
+        <text class="muted">×{{dish.quantity}}{{dish.note ? ' · ' + dish.note : ''}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="card section">
+    <view class="section-title">合计需求（已提交）</view>
+    <view wx:for="{{detail.totals}}" wx:key="recipeId" class="dish-row total">
+      <text data-id="{{item.recipeId}}" bindtap="onOpenRecipe">{{item.name}}</text>
+      <text class="muted">×{{item.quantity}}</text>
+    </view>
+    <view wx:if="{{!detail.totals.length}}" class="muted">还没有已提交的菜</view>
+  </view>
+
+  <view class="shopping-link" bindtap="onOpenShopping">
+    <text>采购清单</text>
+    <text class="muted">按已提交点菜合并食材 ›</text>
+  </view>
+
+  <view wx:if="{{detail.canConfirm}}" class="button-wrap">
+    <button class="btn-primary" loading="{{busy}}" bindtap="onConfirm">确认并开始制作</button>
+    <view class="muted tip">确认后点菜单锁定，并生成制作任务</view>
+  </view>
+  <view wx:elif="{{detail.isOwner}}" class="muted tip">等大家提交后即可确认</view>
+  <view wx:else class="muted tip">由家庭创建者确认后进入制作</view>
+</view>
+
+<view wx:elif="{{loading}}" class="page muted">加载中…</view>
+<view wx:else class="page error">{{error || '不存在'}}</view>

@@ -1,0 +1,51 @@
+.page {
+  padding: var(--space-block);
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.page-title {
+  font-size: 34rpx;
+  font-weight: 600;
+  margin-bottom: 12rpx;
+}
+
+.card {
+  border: 1rpx solid var(--color-line);
+  border-radius: var(--radius-card);
+  padding: var(--space-card);
+  background: var(--color-bg);
+}
+
+.muted {
+  color: var(--color-muted);
+  font-size: 24rpx;
+}
+
+.placeholder {
+  margin-top: 16rpx;
+  padding: 40rpx 20rpx;
+  border: 1rpx dashed var(--color-line);
+  border-radius: var(--radius-card);
+  color: var(--color-muted);
+  font-size: 26rpx;
+  text-align: center;
+}
+
+.btn-primary {
+  background: var(--color-accent);
+  color: #ffffff;
+  border-radius: var(--radius-pill);
+  padding: 20rpx 40rpx;
+  font-size: 28rpx;
+  text-align: center;
+}
+
+.tag {
+  display: inline-block;
+  padding: 2rpx 16rpx;
+  border-radius: 8rpx;
+  background: var(--color-accent-weak);
+  color: var(--color-accent);
+  font-size: 22rpx;
+}

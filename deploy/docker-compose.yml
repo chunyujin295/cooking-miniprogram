@@ -1,0 +1,41 @@
+name: cooking
+services:
+  api:
+    build: ../server
+    restart: always
+    env_file:
+      - ../server/.env
+    ports:
+      - "127.0.0.1:5011:3000"
+    depends_on:
+      - postgres
+      - minio
+
+  postgres:
+    image: postgres:16-alpine
+    restart: always
+    environment:
+      POSTGRES_DB: cooking
+      POSTGRES_USER: cooking
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-cooking}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:5433:5432"
+
+  minio:
+    image: minio/minio:latest
+    restart: always
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minio}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minio12345}
+    volumes:
+      - miniodata:/data
+    ports:
+      - "127.0.0.1:9100:9000"
+      - "127.0.0.1:9101:9001"
+
+volumes:
+  pgdata:
+  miniodata:

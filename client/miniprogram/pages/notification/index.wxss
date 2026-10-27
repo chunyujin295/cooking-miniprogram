@@ -1,0 +1,51 @@
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16rpx;
+}
+
+.title {
+  font-size: 34rpx;
+  font-weight: 600;
+}
+
+.read-all {
+  font-size: 24rpx;
+  color: var(--color-accent);
+}
+
+.read-all.disabled {
+  color: var(--color-muted);
+}
+
+.item {
+  margin-bottom: 12rpx;
+}
+
+.item.read {
+  opacity: 0.62;
+}
+
+.item-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 6rpx;
+}
+
+.item-title {
+  font-size: 28rpx;
+  font-weight: 600;
+}
+
+.item-body {
+  font-size: 25rpx;
+  color: var(--color-ink-2);
+}
+
+.error {
+  margin-bottom: 12rpx;
+  color: #a33;
+  font-size: 24rpx;
+}

@@ -1,0 +1,80 @@
+<view class="page">
+  <view class="tabs">
+    <view
+      class="tab {{scope === 'active' ? 'on' : ''}}"
+      data-scope="active"
+      bindtap="onScopeTap"
+    >待处理</view>
+    <view
+      class="tab {{scope === 'all' ? 'on' : ''}}"
+      data-scope="all"
+      bindtap="onScopeTap"
+    >全部</view>
+  </view>
+
+  <view wx:if="{{error}}" class="error">{{error}}</view>
+
+  <view wx:for="{{tasks}}" wx:key="id" class="card task">
+    <view class="task-head">
+      <view class="meal">{{item.label}} · {{item.mealDate}}</view>
+      <text class="chip {{item.status === 'pending' ? '' : 'on'}}">{{item.statusText}}</text>
+    </view>
+    <view class="muted">{{item.assigneeText}} · 共 {{item.totalQuantity}} 份 · 已完成 {{item.completedCount}}/{{item.items.length}} 道</view>
+
+    <view class="dish-list">
+      <view wx:for="{{item.items}}" wx:for-item="dish" wx:key="id" class="dish">
+        <view class="dish-main">
+          <view class="dish-name">{{dish.name}} × {{dish.quantity}}</view>
+          <view class="muted source">{{dish.sourceText}}</view>
+        </view>
+        <view wx:if="{{dish.status === 'completed'}}" class="done">
+          已完成{{dish.completedByName ? ' · ' + dish.completedByName : ''}}
+        </view>
+        <view
+          wx:elif="{{item.started}}"
+          class="mini-btn"
+          data-task="{{item.id}}"
+          data-item="{{dish.id}}"
+          bindtap="onCompleteItem"
+        >完成</view>
+      </view>
+    </view>
+
+    <view class="hint muted" wx:if="{{!item.started && item.status !== 'completed'}}">
+      {{item.canAccept ? '认领后可开始制作' : '等待接单人开始制作'}}
+    </view>
+
+    <view class="links">
+      <view class="link" data-session="{{item.sessionId}}" bindtap="onOpenShopping">采购清单 ›</view>
+    </view>
+
+    <view class="actions">
+      <button
+        wx:if="{{item.canAccept}}"
+        class="btn-primary small"
+        loading="{{busyId === item.id}}"
+        data-id="{{item.id}}"
+        bindtap="onAccept"
+      >我来做</button>
+      <button
+        wx:if="{{item.canStart}}"
+        class="btn-primary small"
+        loading="{{busyId === item.id}}"
+        data-id="{{item.id}}"
+        bindtap="onStart"
+      >开始制作</button>
+      <button
+        wx:if="{{item.canServe}}"
+        class="btn-primary small"
+        loading="{{busyId === item.id}}"
+        data-id="{{item.id}}"
+        bindtap="onServe"
+      >确认出餐</button>
+    </view>
+  </view>
+
+  <view wx:if="{{loading}}" class="muted">加载中…</view>
+  <view wx:elif="{{!tasks.length}}" class="placeholder">
+    暂无制作任务。在「点菜」确认菜单后会自动生成任务
+  </view>
+</view>

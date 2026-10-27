@@ -1,0 +1,51 @@
+<view class="page">
+  <view class="head">
+    <input
+      class="search"
+      placeholder="搜索菜名"
+      value="{{keyword}}"
+      confirm-type="search"
+      bindinput="onKeywordInput"
+    />
+    <view class="import-btn" bindtap="onImport">导入</view>
+    <view class="add-btn" bindtap="onAdd">＋</view>
+  </view>
+
+  <scroll-view class="tag-bar" scroll-x wx:if="{{tags.length}}">
+    <view
+      wx:for="{{tags}}"
+      wx:key="id"
+      class="tag-chip {{item.selected ? 'on' : ''}}"
+      data-id="{{item.id}}"
+      bindtap="onToggleTag"
+    >{{item.name}}</view>
+  </scroll-view>
+
+  <view wx:if="{{error}}" class="error">{{error}}</view>
+
+  <view class="list">
+    <view
+      wx:for="{{recipes}}"
+      wx:key="id"
+      class="card recipe-card"
+      data-id="{{item.id}}"
+      bindtap="onOpen"
+    >
+      <image wx:if="{{item.cover}}" class="cover" src="{{item.cover}}" mode="aspectFill" />
+      <view wx:else class="cover cover-empty">无图</view>
+      <view class="body">
+        <view class="name">{{item.name}}</view>
+        <view class="meta">
+          <text>{{item.totalMinutes}} 分钟</text>
+          <text wx:if="{{item.isArchived}}" class="archived">已归档</text>
+        </view>
+        <view class="tags">
+          <text wx:for="{{item.tags}}" wx:for-item="tag" wx:key="id" class="tag">{{tag.name}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{loading}}" class="muted">加载中…</view>
+  <view wx:elif="{{!recipes.length}}" class="placeholder">还没有菜谱，点右上角「＋」添加第一道菜</view>
+</view>
