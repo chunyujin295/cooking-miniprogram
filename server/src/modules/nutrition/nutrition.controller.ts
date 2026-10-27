@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Param, Post, UseGuards } from '@nestjs/common'
 import { CurrentUser, type AuthUser } from '../../common/decorators/current-user.decorator'
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard'
 import { SaveNutritionDto } from './dto/save-nutrition.dto'
@@ -18,7 +18,7 @@ export class NutritionController {
     return this.service.get(user.userId, recipeId)
   }
 
-  /** 保存外部 AI 模板给出的营养值（不调用模型） */
+  /** 保存每份营养值（手动录入或模板整理，均不调用模型） */
   @Post()
   save(
     @CurrentUser() user: AuthUser,
@@ -26,6 +26,15 @@ export class NutritionController {
     @Body() dto: SaveNutritionDto,
   ): Promise<NutritionView> {
     return this.service.save(user.userId, recipeId, dto)
+  }
+
+  /** 清空营养数据：编辑页把数值全部清空后保存时调用 */
+  @Delete()
+  remove(
+    @CurrentUser() user: AuthUser,
+    @Param('recipeId') recipeId: string,
+  ): Promise<{ recipeId: string }> {
+    return this.service.remove(user.userId, recipeId)
   }
 
   /** 内置估算（保留备用，小程序不再暴露入口） */

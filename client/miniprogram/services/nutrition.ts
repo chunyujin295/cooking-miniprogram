@@ -24,6 +24,8 @@ export interface SaveNutritionPayload {
   fiberG?: number
   sodiumMg?: number
   confidence?: 'low' | 'medium' | 'high'
+  /** manual：用户手动录入（直接算已确认）；不传则按模板整理处理 */
+  origin?: 'manual' | 'external-ai'
 }
 
 export function getRecipeNutrition(recipeId: string): Promise<NutritionView | null> {
@@ -46,5 +48,13 @@ export function confirmRecipeNutrition(recipeId: string): Promise<NutritionView>
   return request<NutritionView>({
     path: `/recipes/${recipeId}/nutrition/confirm`,
     method: 'POST',
+  })
+}
+
+/** 清空这道菜的营养数据 */
+export function deleteRecipeNutrition(recipeId: string): Promise<{ recipeId: string }> {
+  return request<{ recipeId: string }>({
+    path: `/recipes/${recipeId}/nutrition`,
+    method: 'DELETE',
   })
 }

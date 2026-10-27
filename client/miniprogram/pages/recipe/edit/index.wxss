@@ -94,6 +94,16 @@
   margin-bottom: 6rpx;
 }
 
+.nutri-row {
+  margin-top: 12rpx;
+}
+
+.nutri-hint {
+  margin-top: 6rpx;
+  font-size: 23rpx;
+  color: var(--color-accent);
+}
+
 .input {
   height: 68rpx;
   padding: 0 18rpx;

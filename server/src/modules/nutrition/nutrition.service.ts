@@ -101,41 +101,40 @@ export class NutritionService {
     }
   }
 
-  /** 保存外部 AI 模板给出的每份营养，标记来源并等待人工确认 */
+  /** 保存每份营养：手动录入直接视为已确认，模板整理的数据等待人工确认 */
   async save(userId: string, recipeId: string, dto: SaveNutritionDto): Promise<NutritionView> {
     const { householdId } = await this.requireMembership(userId)
     await this.requireRecipe(householdId, recipeId)
+    const manual = dto.origin === 'manual'
+    const source = manual ? 'manual' : 'external-ai'
+    const confidence = dto.confidence ?? (manual ? 'high' : 'low')
+    const values = {
+      basisType: 'per_serving',
+      basisQuantity: 1,
+      energyKcal: dto.energyKcal,
+      proteinG: dto.proteinG,
+      fatG: dto.fatG,
+      carbohydrateG: dto.carbohydrateG,
+      fiberG: dto.fiberG ?? null,
+      sodiumMg: dto.sodiumMg ?? null,
+      source,
+      confidence,
+      isConfirmed: manual,
+    }
     const row = await this.prisma.recipeNutrition.upsert({
       where: { recipeId },
-      create: {
-        recipeId,
-        basisType: 'per_serving',
-        basisQuantity: 1,
-        energyKcal: dto.energyKcal,
-        proteinG: dto.proteinG,
-        fatG: dto.fatG,
-        carbohydrateG: dto.carbohydrateG,
-        fiberG: dto.fiberG ?? null,
-        sodiumMg: dto.sodiumMg ?? null,
-        source: 'external-ai',
-        confidence: dto.confidence ?? 'low',
-        isConfirmed: false,
-      },
-      update: {
-        basisType: 'per_serving',
-        basisQuantity: 1,
-        energyKcal: dto.energyKcal,
-        proteinG: dto.proteinG,
-        fatG: dto.fatG,
-        carbohydrateG: dto.carbohydrateG,
-        fiberG: dto.fiberG ?? null,
-        sodiumMg: dto.sodiumMg ?? null,
-        source: 'external-ai',
-        confidence: dto.confidence ?? 'low',
-        isConfirmed: false,
-      },
+      create: { recipeId, ...values },
+      update: values,
     })
     return toNutritionView(row)
+  }
+
+  /** 清空某道菜的营养数据（手动录入填错了可以整条删掉） */
+  async remove(userId: string, recipeId: string): Promise<{ recipeId: string }> {
+    const { householdId } = await this.requireMembership(userId)
+    await this.requireRecipe(householdId, recipeId)
+    await this.prisma.recipeNutrition.deleteMany({ where: { recipeId } })
+    return { recipeId }
   }
 
   /** 用户核对后确认，统计页才会把它算作可信数据 */

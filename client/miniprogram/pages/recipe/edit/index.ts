@@ -1,5 +1,9 @@
 import { BASE_URL } from '../../../config/env'
-import { saveRecipeNutrition, type SaveNutritionPayload } from '../../../services/nutrition'
+import {
+  deleteRecipeNutrition,
+  saveRecipeNutrition,
+  type SaveNutritionPayload,
+} from '../../../services/nutrition'
 import {
   chooseAndUploadImages,
   createRecipe,
@@ -33,10 +37,53 @@ interface StepRow {
   content: string
 }
 
+/** 营养表单全部用字符串保存，空串表示没填 */
+interface NutritionForm {
+  energyKcal: string
+  proteinG: string
+  fatG: string
+  carbohydrateG: string
+  fiberG: string
+  sodiumMg: string
+}
+
 type NumberField = 'baseServings' | 'prepMinutes' | 'cookMinutes'
 type IngredientField = 'name' | 'quantity' | 'unit'
+type NutritionField = keyof NutritionForm
 
 const MONTHS = Array.from({ length: 12 }, (_, index) => index + 1)
+
+function emptyNutrition(): NutritionForm {
+  return {
+    energyKcal: '',
+    proteinG: '',
+    fatG: '',
+    carbohydrateG: '',
+    fiberG: '',
+    sodiumMg: '',
+  }
+}
+
+/** 服务端营养数据 / 模板草稿 → 表单字符串 */
+function nutritionToForm(source: {
+  energyKcal: number
+  proteinG: number
+  fatG: number
+  carbohydrateG: number
+  fiberG?: number | null
+  sodiumMg?: number | null
+}): NutritionForm {
+  const text = (value?: number | null): string =>
+    value === null || value === undefined ? '' : String(value)
+  return {
+    energyKcal: text(source.energyKcal),
+    proteinG: text(source.proteinG),
+    fatG: text(source.fatG),
+    carbohydrateG: text(source.carbohydrateG),
+    fiberG: text(source.fiberG),
+    sodiumMg: text(source.sodiumMg),
+  }
+}
 
 Page({
   data: {
@@ -54,6 +101,11 @@ Page({
     newTag: '',
     ingredients: [{ name: '', quantity: '', unit: '' }] as IngredientRow[],
     steps: [{ content: '' }] as StepRow[],
+    nutrition: emptyNutrition(),
+    /** manual / external-ai / ai；空表示还没有营养数据 */
+    nutritionSource: '',
+    nutritionConfirmed: false,
+    nutritionSnapshot: JSON.stringify(emptyNutrition()),
     uploading: false,
     loading: true,
     saving: false,
@@ -88,16 +140,27 @@ Page({
       const chips: TagChip[] = tags.map((tag) => ({ id: tag.id, name: tag.name, selected: false }))
 
       if (!this.data.id) {
+        const nutrition = this.pendingNutrition
+          ? nutritionToForm(this.pendingNutrition)
+          : emptyNutrition()
         this.setData({
           tags: chips,
           loading: false,
           ...(this.pendingDraft ? draftToData(this.pendingDraft) : {}),
+          nutrition,
+          nutritionSnapshot: JSON.stringify(nutrition),
+          // 模板整理的数据仍标记为待确认，保留详情页的「确认数据」
+          nutritionSource: this.pendingNutrition ? 'external-ai' : '',
+          nutritionConfirmed: false,
         })
         return
       }
 
       wx.setNavigationBarTitle({ title: '编辑菜谱' })
       const recipe = await getRecipe(this.data.id)
+      const nutrition = recipe.nutrition
+        ? nutritionToForm(recipe.nutrition)
+        : emptyNutrition()
       this.setData({
         name: recipe.name,
         description: recipe.description ?? '',
@@ -116,6 +179,10 @@ Page({
         steps: recipe.steps.length
           ? recipe.steps.map((step) => ({ content: step.content }))
           : [{ content: '' }],
+        nutrition,
+        nutritionSnapshot: JSON.stringify(nutrition),
+        nutritionSource: recipe.nutrition?.source ?? '',
+        nutritionConfirmed: recipe.nutrition?.isConfirmed ?? false,
         loading: false,
       })
     } catch (err) {
@@ -132,6 +199,18 @@ Page({
     const field = e.currentTarget.dataset.field as NumberField
     const value = Math.max(0, Number(e.detail.value) || 0)
     this.setData({ [field]: value })
+  },
+
+  onNutritionInput(e: WechatMiniprogram.Input) {
+    const field = e.currentTarget.dataset.field as NutritionField
+    const patch: Record<string, string> = {}
+    patch[`nutrition.${field}`] = e.detail.value
+    this.setData(patch)
+  },
+
+  /** 一键清空：保存时会删掉这条营养记录 */
+  onClearNutrition() {
+    this.setData({ nutrition: emptyNutrition() })
   },
 
   onMonthToggle(e: WechatMiniprogram.TouchEvent) {
@@ -298,6 +377,13 @@ Page({
       return
     }
 
+    const nutritionChanged = JSON.stringify(this.data.nutrition) !== this.data.nutritionSnapshot
+    const { payload: nutritionPayload, error: nutritionError } = this.buildNutritionPayload()
+    if (nutritionChanged && nutritionError) {
+      this.setData({ error: nutritionError })
+      return
+    }
+
     const payload = {
       name,
       description: this.data.description.trim() || undefined,
@@ -316,25 +402,111 @@ Page({
     try {
       if (this.data.id) {
         await updateRecipe(this.data.id, payload)
+        const nutritionWarn = await this.applyNutrition(
+          this.data.id,
+          nutritionChanged,
+          nutritionPayload,
+          false,
+        )
         freshness.invalidate('recipe', 'order', 'stats')
+        if (nutritionWarn) {
+          this.setData({ error: `菜谱已保存，${nutritionWarn}` })
+          return
+        }
         wx.showToast({ title: '已保存', icon: 'success' })
         setTimeout(() => wx.navigateBack(), 600)
       } else {
         const created = await createRecipe(payload)
-        if (this.pendingNutrition) {
-          // 营养值随模板一起导入，失败不阻断保存
-          await saveRecipeNutrition(created.id, this.pendingNutrition as SaveNutritionPayload).catch(
-            () => undefined,
-          )
-        }
+        const nutritionWarn = await this.applyNutrition(
+          created.id,
+          nutritionChanged,
+          nutritionPayload,
+          true,
+        )
         freshness.invalidate('recipe', 'order', 'stats')
-        wx.showToast({ title: '已创建', icon: 'success' })
+        if (nutritionWarn) {
+          wx.showToast({ title: `菜谱已创建，${nutritionWarn}`, icon: 'none' })
+        }
         wx.redirectTo({ url: `/pages/recipe/detail/index?id=${created.id}` })
       }
     } catch (err) {
       this.setData({ error: err instanceof Error ? err.message : '保存失败' })
     } finally {
       this.setData({ saving: false })
+    }
+  },
+
+  /** 营养表单 → 请求体；全空返回 null（表示不记录） */
+  buildNutritionPayload(): { payload: SaveNutritionPayload | null; error: string } {
+    const form = this.data.nutrition
+    const filled = (Object.keys(form) as NutritionField[]).some((key) => form[key].trim() !== '')
+    if (!filled) {
+      return { payload: null, error: '' }
+    }
+
+    const energyText = form.energyKcal.trim()
+    const energy = Number(energyText)
+    if (!energyText || !Number.isFinite(energy) || energy <= 0) {
+      return { payload: null, error: '填写营养时，每份热量（kcal）必填且要大于 0' }
+    }
+
+    const macro = (value: string): number => {
+      const numeric = Number(value.trim())
+      return value.trim() ? Math.max(0, numeric || 0) : 0
+    }
+    const optional = (value: string): number | undefined => {
+      const numeric = Number(value.trim())
+      return value.trim() && Number.isFinite(numeric) && numeric >= 0 ? numeric : undefined
+    }
+
+    return {
+      payload: {
+        energyKcal: Math.round(energy),
+        proteinG: macro(form.proteinG),
+        fatG: macro(form.fatG),
+        carbohydrateG: macro(form.carbohydrateG),
+        fiberG: optional(form.fiberG),
+        sodiumMg: optional(form.sodiumMg),
+        // 模板整理且尚未确认的数据继续走「待确认」，其余按手动录入直接确认
+        origin: this.keepUnconfirmed() ? 'external-ai' : 'manual',
+      },
+      error: '',
+    }
+  },
+
+  /** AI 整理但还没确认过的数据，保存后仍需要到详情页确认 */
+  keepUnconfirmed(): boolean {
+    const source = this.data.nutritionSource
+    return (source === 'external-ai' || source === 'ai') && !this.data.nutritionConfirmed
+  },
+
+  /**
+   * 写入营养数据：没改动就跳过；清空已有数据则删除整条记录。
+   * isNew 用于新建菜谱：即使表单没「改动」也要把模板带来的数值写进去。
+   */
+  async applyNutrition(
+    recipeId: string,
+    changed: boolean,
+    payload: SaveNutritionPayload | null,
+    isNew: boolean,
+  ): Promise<string> {
+    if (!changed && !(isNew && payload)) {
+      return ''
+    }
+    try {
+      if (!payload) {
+        if (this.data.nutritionSource) {
+          await deleteRecipeNutrition(recipeId)
+          this.setData({ nutritionSource: '', nutritionConfirmed: false })
+        }
+      } else {
+        const saved = await saveRecipeNutrition(recipeId, payload)
+        this.setData({ nutritionSource: saved.source, nutritionConfirmed: saved.isConfirmed })
+      }
+      this.setData({ nutritionSnapshot: JSON.stringify(this.data.nutrition) })
+      return ''
+    } catch (err) {
+      return err instanceof Error ? `营养数据保存失败：${err.message}` : '营养数据保存失败'
     }
   },
 })

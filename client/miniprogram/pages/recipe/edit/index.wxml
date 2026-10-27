@@ -61,6 +61,47 @@
     </view>
 
     <view class="card section">
+      <view class="section-title">每份营养（可选）</view>
+      <view class="muted">按每份填写，用于统计热量；全部留空表示不记录。</view>
+      <view wx:if="{{nutritionSource === 'manual'}}" class="nutri-hint">当前为手动录入，保存后直接计入统计。</view>
+      <view wx:elif="{{nutritionSource}}" class="nutri-hint">
+        {{nutritionConfirmed ? '当前营养数据已确认。' : '当前是 AI 整理的数据，修改后会重新回到待确认。'}}
+      </view>
+
+      <view class="field-row nutri-row">
+        <view class="field">
+          <text class="label">热量(kcal)</text>
+          <input class="input" type="digit" value="{{nutrition.energyKcal}}" data-field="energyKcal" bindinput="onNutritionInput" placeholder="如 320" />
+        </view>
+        <view class="field">
+          <text class="label">蛋白质(g)</text>
+          <input class="input" type="digit" value="{{nutrition.proteinG}}" data-field="proteinG" bindinput="onNutritionInput" placeholder="如 18" />
+        </view>
+      </view>
+      <view class="field-row nutri-row">
+        <view class="field">
+          <text class="label">脂肪(g)</text>
+          <input class="input" type="digit" value="{{nutrition.fatG}}" data-field="fatG" bindinput="onNutritionInput" placeholder="如 12" />
+        </view>
+        <view class="field">
+          <text class="label">碳水(g)</text>
+          <input class="input" type="digit" value="{{nutrition.carbohydrateG}}" data-field="carbohydrateG" bindinput="onNutritionInput" placeholder="如 35" />
+        </view>
+      </view>
+      <view class="field-row nutri-row">
+        <view class="field">
+          <text class="label">纤维(g，可选)</text>
+          <input class="input" type="digit" value="{{nutrition.fiberG}}" data-field="fiberG" bindinput="onNutritionInput" placeholder="可不填" />
+        </view>
+        <view class="field">
+          <text class="label">钠(mg，可选)</text>
+          <input class="input" type="digit" value="{{nutrition.sodiumMg}}" data-field="sodiumMg" bindinput="onNutritionInput" placeholder="可不填" />
+        </view>
+      </view>
+      <view class="mini-btn" bindtap="onClearNutrition">清空数值</view>
+    </view>
+
+    <view class="card section">
       <view class="section-title">标签</view>
       <view class="chips">
         <view

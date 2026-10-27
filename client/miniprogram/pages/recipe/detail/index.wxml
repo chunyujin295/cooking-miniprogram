@@ -25,7 +25,7 @@
   </view>
 
   <view class="card section nutrition">
-    <view class="section-title">每份营养（估算）</view>
+    <view class="section-title">每份营养</view>
     <block wx:if="{{recipe.nutrition}}">
       <view class="kcal-row">
         <text class="kcal">{{recipe.nutrition.energyKcal}}</text>
@@ -42,14 +42,16 @@
           <text class="muted">纤维</text><text>{{recipe.nutrition.fiberG}} g</text>
         </view>
       </view>
-      <view class="muted nutri-note">数值由你使用的 AI 估算，误差通常 ±20%，仅供参考</view>
+      <view class="muted nutri-note">
+        {{recipe.nutrition.source === 'manual' ? '手动录入的数值，可在编辑页修改' : '数值由你使用的 AI 或外部模板提供，误差通常 ±20%，仅供参考'}}
+      </view>
       <view wx:if="{{!recipe.nutrition.isConfirmed}}" class="nutri-actions">
         <button class="btn-primary small" loading="{{confirming}}" bindtap="onConfirmNutrition">确认数据</button>
       </view>
     </block>
     <block wx:else>
       <view class="muted">
-        还没有热量数据。用菜谱页的「整理」按模板让 AI 一并给出热量，导入时会自动带上。
+        还没有营养数据。可以在编辑页手动填写每份热量，或用菜谱页的「整理」按模板让 AI 一并给出。
       </view>
     </block>
   </view>

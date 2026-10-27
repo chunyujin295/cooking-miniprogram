@@ -37,4 +37,9 @@ export class SaveNutritionDto {
   @IsOptional()
   @IsIn(['low', 'medium', 'high'])
   confidence?: 'low' | 'medium' | 'high'
+
+  /** manual 表示用户手动录入，可直接参与统计；默认沿用模板整理的 external-ai */
+  @IsOptional()
+  @IsIn(['manual', 'external-ai'])
+  origin?: 'manual' | 'external-ai'
 }
