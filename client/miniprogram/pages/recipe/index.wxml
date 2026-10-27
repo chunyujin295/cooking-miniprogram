@@ -11,6 +11,11 @@
     <view class="add-btn" bindtap="onAdd">＋</view>
   </view>
 
+  <view class="scope-row">
+    <view class="scope {{showArchived ? '' : 'on'}}" data-archived="0" bindtap="onScopeTap">在用</view>
+    <view class="scope {{showArchived ? 'on' : ''}}" data-archived="1" bindtap="onScopeTap">已归档</view>
+  </view>
+
   <scroll-view class="tag-bar" scroll-x wx:if="{{tags.length}}">
     <view
       wx:for="{{tags}}"
@@ -47,5 +52,7 @@
   </view>
 
   <view wx:if="{{loading}}" class="muted">加载中…</view>
-  <view wx:elif="{{!recipes.length}}" class="placeholder">还没有菜谱，点右上角「＋」添加第一道菜</view>
+  <view wx:elif="{{!recipes.length}}" class="placeholder">
+    {{showArchived ? '还没有归档的菜谱' : '还没有菜谱，点右上角「＋」添加第一道菜'}}
+  </view>
 </view>

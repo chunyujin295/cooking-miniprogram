@@ -18,6 +18,7 @@ interface TagChip extends TagView {
 Page({
   data: {
     keyword: '',
+    showArchived: false,
     tags: [] as TagChip[],
     recipes: [] as CardView[],
     loading: true,
@@ -58,11 +59,15 @@ Page({
     const list = await listRecipes({
       keyword: this.data.keyword.trim(),
       tagIds: activeTagIds,
+      // 一次取全，再按「在用 / 已归档」过滤，避免两个视图各自漏数据
+      includeArchived: true,
     })
-    return list.map((item) => ({
-      ...item,
-      cover: item.coverUrl ? `${BASE_URL}${item.coverUrl}` : '',
-    }))
+    return list
+      .filter((item) => item.isArchived === this.data.showArchived)
+      .map((item) => ({
+        ...item,
+        cover: item.coverUrl ? `${BASE_URL}${item.coverUrl}` : '',
+      }))
   },
 
   async refreshList() {
@@ -95,6 +100,16 @@ Page({
         void this.refreshList()
       },
     )
+  },
+
+  onScopeTap(e: WechatMiniprogram.TouchEvent) {
+    const showArchived = e.currentTarget.dataset.archived === '1'
+    if (showArchived === this.data.showArchived) {
+      return
+    }
+    this.setData({ showArchived }, () => {
+      void this.refreshList()
+    })
   },
 
   onAdd() {

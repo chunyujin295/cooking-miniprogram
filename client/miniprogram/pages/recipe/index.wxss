@@ -38,6 +38,26 @@
   font-size: 40rpx;
 }
 
+.scope-row {
+  display: flex;
+  gap: 10rpx;
+  margin-bottom: 16rpx;
+}
+
+.scope {
+  padding: 6rpx 22rpx;
+  border-radius: var(--radius-pill);
+  background: var(--color-bar);
+  color: var(--color-ink-2);
+  font-size: 23rpx;
+}
+
+.scope.on {
+  background: var(--color-accent-weak);
+  color: var(--color-accent);
+  font-weight: 600;
+}
+
 .tag-bar {
   white-space: nowrap;
   margin-bottom: 20rpx;
