@@ -169,7 +169,8 @@ Page({
     })
 
     if (type === 'snack') {
-      // 加餐可多个实例，先让用户选一个或新建
+      // 加餐可多个实例，先让用户选一个或新建；不走 loadDetail，需要手动收掉 loading
+      this.setData({ loading: false })
       return
     }
 
