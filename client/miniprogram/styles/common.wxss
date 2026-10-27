@@ -2,6 +2,39 @@
   padding: var(--space-block);
   min-height: 100vh;
   box-sizing: border-box;
+  /* 只做透明度，避免 transform 影响 fixed 元素定位 */
+  animation: page-fade var(--dur-base) ease-out both;
+}
+
+@keyframes page-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* 卡片入场：translateY 会有位移，只给非 fixed 的内容用 */
+.card-in {
+  animation: card-up var(--dur-base) var(--ease-out) both;
+}
+
+@keyframes card-up {
+  from {
+    opacity: 0;
+    transform: translateY(16rpx);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 按压反馈：只改 transform / opacity，走合成层 */
+.press {
+  transform: scale(0.97);
+  opacity: 0.88;
 }
 
 .page-title {

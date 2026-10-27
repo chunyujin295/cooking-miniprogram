@@ -32,9 +32,12 @@
     <view
       wx:for="{{recipes}}"
       wx:key="id"
-      class="card recipe-card"
+      class="card recipe-card card-in"
+      style="animation-delay: {{index < 6 ? index * 35 : 0}}ms"
       data-id="{{item.id}}"
       bindtap="onOpen"
+      hover-class="press"
+      hover-stay-time="80"
     >
       <image wx:if="{{item.cover}}" class="cover" src="{{item.cover}}" mode="aspectFill" />
       <view wx:else class="cover cover-empty">无图</view>

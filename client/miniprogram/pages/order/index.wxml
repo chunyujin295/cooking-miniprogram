@@ -79,9 +79,20 @@
 
     <scroll-view class="dish-grid" scroll-y enhanced show-scrollbar>
       <view class="grid">
-        <view wx:for="{{recipes}}" wx:key="id" class="grid-card">
-          <view class="grid-cover-wrap" data-id="{{item.id}}" bindtap="onOpenRecipe">
-            <image wx:if="{{item.cover}}" class="grid-cover" src="{{item.cover}}" mode="aspectFill" />
+        <view
+          wx:for="{{recipes}}"
+          wx:key="id"
+          class="grid-card card-in"
+          style="animation-delay: {{index < 6 ? index * 35 : 0}}ms"
+        >
+          <view
+            class="grid-cover-wrap"
+            data-id="{{item.id}}"
+            bindtap="onOpenRecipe"
+            hover-class="cover-press"
+            hover-stay-time="80"
+          >
+            <image wx:if="{{item.cover}}" class="grid-cover" src="{{item.cover}}" mode="aspectFill" lazy-load />
             <view wx:else class="grid-cover grid-cover-empty">无图</view>
             <view wx:if="{{allergenMap[item.id]}}" class="allergen-badge">忌</view>
             <view class="cover-hint">看做法</view>
@@ -91,9 +102,17 @@
                 class="ov-btn"
                 data-id="{{item.id}}"
                 catchtap="onDishRemove"
+                hover-class="ov-press"
+                hover-stay-time="60"
               >−</view>
               <text wx:if="{{qtyMap[item.id]}}" class="ov-qty">{{qtyMap[item.id]}}</text>
-              <view class="ov-btn plus" data-id="{{item.id}}" catchtap="onDishAdd">＋</view>
+              <view
+                class="ov-btn plus"
+                data-id="{{item.id}}"
+                catchtap="onDishAdd"
+                hover-class="ov-press"
+                hover-stay-time="60"
+              >＋</view>
             </view>
           </view>
           <view class="grid-name">{{item.name}}</view>

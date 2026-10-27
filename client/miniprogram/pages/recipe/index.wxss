@@ -89,6 +89,7 @@
   display: flex;
   gap: 20rpx;
   padding: 16rpx;
+  transition: transform var(--dur-fast) var(--ease-spring), opacity var(--dur-fast) ease-out;
 }
 
 .cover {

@@ -13,7 +13,7 @@
     </view>
   </view>
 
-  <view class="card member-card">
+  <view class="card member-card card-in" style="animation-delay: 40ms">
     <view class="member" wx:for="{{members}}" wx:key="userId">
       <image wx:if="{{item.avatar}}" class="avatar avatar-img" src="{{item.avatar}}" mode="aspectFill" />
       <view wx:else class="avatar">{{item.initial}}</view>
@@ -26,7 +26,7 @@
   <button class="btn-primary invite-btn" bindtap="onCreateInvite">生成邀请码</button>
   <view wx:if="{{inviteCode}}" class="invite" bindtap="onCopyInvite">邀请码 {{inviteCode}} · 点击复制</view>
 
-  <view class="card meal-card">
+  <view class="card meal-card card-in" style="animation-delay: 80ms">
     <view class="meal-head">
       <view class="meal-title">今日菜单</view>
     </view>
@@ -37,7 +37,7 @@
     <view wx:if="{{!meals.length && !loading}}" class="muted">今天还没开始点菜</view>
   </view>
 
-  <view class="card nav-card" bindtap="onOpenCalendar">
+  <view class="card nav-card card-in" style="animation-delay: 120ms" bindtap="onOpenCalendar" hover-class="press" hover-stay-time="80">
     <view class="nav-main">
       <view class="nav-title">饮食日历</view>
       <view class="muted">按月查看每天的餐次与出餐情况</view>
