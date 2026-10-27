@@ -1,6 +1,8 @@
-# 家庭餐桌（cooking-miniprogram）
+# 烹饪之王（cooking-miniprogram）
 
 给三口之家用的微信小程序点菜工具：菜谱管理 → 按餐次点菜 → 汇总确认 → 制作出餐 → 统计与采购清单。
+
+名字取自 cooking 的 cook + king。
 
 前端是原生小程序（TypeScript 预编译成 `.js`），后端是 NestJS + Prisma + PostgreSQL，图片走自建 MinIO。
 
@@ -107,7 +109,7 @@ SSH 入口 `yj@codis.fun -P 6000` 由 VPS 的 ufw 按来源 IP 白名单放行�
 ## 文档
 
 - [开发进度与接口](docs/开发进度与接口.md)：接口清单、页面清单、部署与排障
-- [家庭餐桌-PRD与原型](docs/家庭餐桌-PRD与原型.html)：需求与交互原型
+- [烹饪之王-PRD与原型](docs/烹饪之王-PRD与原型.html)：需求与交互原型
 
 ## 许可
 

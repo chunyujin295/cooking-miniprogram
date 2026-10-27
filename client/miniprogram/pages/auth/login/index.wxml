@@ -1,5 +1,5 @@
 <view class="login">
-  <view class="brand">家庭餐桌</view>
+  <view class="brand">烹饪之王</view>
   <view class="slogan">三个人，一顿饭，不用再问「吃什么」</view>
 
   <button class="btn-primary login-btn" bindtap="onLogin" loading="{{loading}}" disabled="{{loading}}">
