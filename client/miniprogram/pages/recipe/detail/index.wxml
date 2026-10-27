@@ -15,6 +15,8 @@
     <text wx:for="{{recipe.tags}}" wx:key="id" class="tag">{{item.name}}</text>
   </view>
 
+  <view class="creator muted">由 {{recipe.creatorName || '家人'}} 添加</view>
+
   <view class="card meta-grid">
     <view class="meta-item"><text class="muted">份数</text><text>{{recipe.baseServings}} 人</text></view>
     <view class="meta-item"><text class="muted">准备</text><text>{{recipe.prepMinutes}} 分钟</text></view>

@@ -50,6 +50,8 @@ export interface RecipeDetailView extends RecipeListItemView {
   tagIds: string[]
   /** manual | external-ai，用于说明内容来源 */
   source: string
+  /** 上传者昵称；未设置昵称时回退「家人」 */
+  creatorName?: string | null
   /** AI 估算的每份营养，未估算时为 null */
   nutrition: NutritionView | null
 }
@@ -89,7 +91,14 @@ export class RecipeService {
     if (!recipe) {
       throw new NotFoundException('菜谱不存在')
     }
-    return this.toDetail(recipe)
+    const creator = await this.prisma.user.findUnique({
+      where: { id: recipe.createdBy },
+      select: { nickname: true },
+    })
+    return {
+      ...this.toDetail(recipe),
+      creatorName: creator?.nickname?.trim() || '家人',
+    }
   }
 
   async create(userId: string, dto: CreateRecipeDto): Promise<RecipeDetailView> {

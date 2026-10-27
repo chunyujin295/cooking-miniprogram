@@ -38,6 +38,11 @@
   gap: 8rpx;
 }
 
+.creator {
+  margin: -8rpx 0 16rpx;
+  font-size: 23rpx;
+}
+
 .meta-grid {
   display: flex;
   flex-wrap: wrap;

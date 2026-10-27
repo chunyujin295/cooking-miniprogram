@@ -36,6 +36,8 @@ export interface RecipeDetailView {
   updatedAt: string
   /** manual | external-ai */
   source: string
+  /** 上传者昵称 */
+  creatorName?: string | null
   /** AI 估算的每份营养，未估算为 null */
   nutrition: NutritionView | null
 }
