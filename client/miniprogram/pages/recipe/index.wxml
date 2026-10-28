@@ -1,4 +1,24 @@
 <view class="page">
+  <block wx:if="{{!loggedIn}}">
+    <view class="guest">
+      <view class="guest-brand">家庭菜谱</view>
+      <view class="guest-slogan">把常做的菜记下来：多图、食材用量、分步做法、时令与每份营养。</view>
+      <view class="guest-list">
+        <view class="guest-item">
+          <view class="guest-item-title">按标签筛选</view>
+          <view class="guest-item-desc">下饭、快手、汤羹…登录后可维护自己的标签体系。</view>
+        </view>
+        <view class="guest-item">
+          <view class="guest-item-title">归档不删除</view>
+          <view class="guest-item-desc">季节菜先归档，想吃了随时恢复，历史点菜记录也不受影响。</view>
+        </view>
+      </view>
+      <button class="btn-primary guest-btn" bindtap="onGuestLogin">微信登录后查看菜谱</button>
+      <view class="guest-tip">登录仅用于同步家庭数据，不读取手机号。</view>
+    </view>
+  </block>
+
+  <block wx:else>
   <view class="head">
     <input
       class="search"
@@ -58,4 +78,5 @@
   <view wx:elif="{{!recipes.length}}" class="placeholder">
     {{showArchived ? '还没有归档的菜谱' : '还没有菜谱，点右上角「＋」添加第一道菜'}}
   </view>
+  </block>
 </view>

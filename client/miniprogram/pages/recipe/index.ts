@@ -18,6 +18,7 @@ interface TagChip extends TagView {
 
 Page({
   data: {
+    loggedIn: session.hasToken(),
     keyword: '',
     showArchived: false,
     tags: [] as TagChip[],
@@ -29,8 +30,12 @@ Page({
   keywordTimer: 0,
 
   onShow() {
-    if (!session.hasToken()) {
-      wx.reLaunch({ url: '/pages/auth/login/index' })
+    const loggedIn = session.hasToken()
+    if (loggedIn !== this.data.loggedIn) {
+      this.setData({ loggedIn })
+    }
+    // 未登录停留在浏览态，由用户点按钮再登录
+    if (!loggedIn) {
       return
     }
     // 短时间内在 tab 之间来回切换时复用上次结果
@@ -41,8 +46,14 @@ Page({
   },
 
   async onPullDownRefresh() {
-    await this.reload()
+    if (this.data.loggedIn) {
+      await this.reload()
+    }
     wx.stopPullDownRefresh()
+  },
+
+  onGuestLogin() {
+    wx.navigateTo({ url: '/pages/auth/login/index' })
   },
 
   async reload() {

@@ -1,4 +1,28 @@
 <view class="page order-page">
+  <block wx:if="{{!loggedIn}}">
+    <view class="guest">
+      <view class="guest-brand">按餐次点菜</view>
+      <view class="guest-slogan">早餐、午餐、晚餐、加餐分开点，家人各自提交后自动汇总成制作任务。</view>
+      <view class="guest-list">
+        <view class="guest-item">
+          <view class="guest-item-title">份数与备注</view>
+          <view class="guest-item-desc">每道菜可以选份数，也能备注「少油」「不要香菜」。</view>
+        </view>
+        <view class="guest-item">
+          <view class="guest-item-title">过敏提醒</view>
+          <view class="guest-item-desc">命中自己的忌口时会在点菜时提醒，不会强行拦截。</view>
+        </view>
+        <view class="guest-item">
+          <view class="guest-item-title">自动汇总</view>
+          <view class="guest-item-desc">创建者确认后生成制作任务与采购清单。</view>
+        </view>
+      </view>
+      <button class="btn-primary guest-btn" bindtap="onGuestLogin">微信登录后开始点菜</button>
+      <view class="guest-tip">登录仅用于同步家庭数据，不读取手机号。</view>
+    </view>
+  </block>
+
+  <block wx:else>
   <view class="date-bar">
     <view
       wx:for="{{dateOptions}}"
@@ -176,4 +200,5 @@
   </block>
 
   <view wx:if="{{loading}}" class="muted">加载中…</view>
+  </block>
 </view>

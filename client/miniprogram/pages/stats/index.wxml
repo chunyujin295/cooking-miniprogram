@@ -1,4 +1,28 @@
 <view class="page">
+  <block wx:if="{{!loggedIn}}">
+    <view class="guest">
+      <view class="guest-brand">家庭统计</view>
+      <view class="guest-slogan">看一段时间内吃了什么、谁家菜最受欢迎，以及热量大致水平。</view>
+      <view class="guest-list">
+        <view class="guest-item">
+          <view class="guest-item-title">热门菜与餐次分布</view>
+          <view class="guest-item-desc">按已提交点菜与已出餐餐次统计，趋势一目了然。</view>
+        </view>
+        <view class="guest-item">
+          <view class="guest-item-title">热量汇总</view>
+          <view class="guest-item-desc">按出餐份数推算合计、日均与每餐均值，并给出数据覆盖率。</view>
+        </view>
+        <view class="guest-item">
+          <view class="guest-item-title">随机抽菜</view>
+          <view class="guest-item-desc">从在用菜谱里抽一道，自动排除近 3 天吃过的。</view>
+        </view>
+      </view>
+      <button class="btn-primary guest-btn" bindtap="onGuestLogin">微信登录后查看统计</button>
+      <view class="guest-tip">登录仅用于同步家庭数据，不读取手机号。</view>
+    </view>
+  </block>
+
+  <block wx:else>
   <view class="tabs">
     <view class="tab {{days === 7 ? 'on' : ''}}" data-days="7" bindtap="onDaysTap">近 7 天</view>
     <view class="tab {{days === 30 ? 'on' : ''}}" data-days="30" bindtap="onDaysTap">近 30 天</view>
@@ -91,4 +115,5 @@
   </view>
 
   <view wx:if="{{loading}}" class="muted">加载中…</view>
+  </block>
 </view>

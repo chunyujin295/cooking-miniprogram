@@ -27,6 +27,13 @@
   width: 100%;
 }
 
+.browse-link {
+  margin-top: 28rpx;
+  padding: 12rpx 24rpx;
+  font-size: 24rpx;
+  color: var(--color-accent);
+}
+
 .error {
   margin-top: 24rpx;
   font-size: 24rpx;

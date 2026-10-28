@@ -82,3 +82,59 @@
   color: var(--color-accent);
   font-size: 22rpx;
 }
+
+/* 未登录时的浏览态：先看功能，再自行决定是否登录 */
+.guest {
+  padding: 40rpx 8rpx 0;
+}
+
+.guest-brand {
+  font-size: 44rpx;
+  font-weight: 700;
+  letter-spacing: 2rpx;
+}
+
+.guest-slogan {
+  margin-top: 12rpx;
+  color: var(--color-ink-2);
+  font-size: 26rpx;
+  line-height: 1.6;
+}
+
+.guest-list {
+  margin-top: 36rpx;
+}
+
+.guest-item {
+  display: flex;
+  flex-direction: column;
+  padding: 24rpx;
+  margin-bottom: 16rpx;
+  border: 1rpx solid var(--color-line);
+  border-radius: var(--radius-card);
+  background: var(--color-bg);
+}
+
+.guest-item-title {
+  font-size: 28rpx;
+  font-weight: 600;
+}
+
+.guest-item-desc {
+  margin-top: 6rpx;
+  color: var(--color-muted);
+  font-size: 24rpx;
+  line-height: 1.6;
+}
+
+.guest-btn {
+  margin-top: 36rpx;
+}
+
+.guest-tip {
+  margin-top: 20rpx;
+  color: var(--color-muted);
+  font-size: 22rpx;
+  line-height: 1.6;
+  text-align: center;
+}

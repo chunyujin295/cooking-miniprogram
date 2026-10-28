@@ -26,6 +26,7 @@ interface MealItem extends MealSessionView {
 
 Page({
   data: {
+    loggedIn: session.hasToken(),
     householdName: '',
     members: [] as MemberItem[],
     inviteCode: '',
@@ -38,8 +39,12 @@ Page({
   },
 
   async onShow() {
-    if (!session.hasToken()) {
-      wx.reLaunch({ url: '/pages/auth/login/index' })
+    const loggedIn = session.hasToken()
+    if (loggedIn !== this.data.loggedIn) {
+      this.setData({ loggedIn })
+    }
+    // 未登录也允许进首页浏览功能，不强制跳登录
+    if (!loggedIn) {
       return
     }
     // tab 切换会反复触发 onShow，短时间内复用上次结果，避免来回刷新
@@ -50,8 +55,14 @@ Page({
   },
 
   async onPullDownRefresh() {
-    await this.load()
+    if (this.data.loggedIn) {
+      await this.load()
+    }
     wx.stopPullDownRefresh()
+  },
+
+  onGuestLogin() {
+    wx.navigateTo({ url: '/pages/auth/login/index' })
   },
 
   async load() {

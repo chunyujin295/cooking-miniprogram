@@ -1,49 +1,81 @@
 <view class="page">
-  <view class="page-title">{{householdName || '烹饪之王'}}</view>
-  <view class="muted">{{members.length}} 位成员</view>
+  <!-- 未登录：先展示产品能力，由用户自行决定是否登录 -->
+  <block wx:if="{{!loggedIn}}">
+    <view class="guest">
+      <view class="guest-brand">烹饪之王</view>
+      <view class="guest-slogan">点餐 · 烹饪 · 出餐，营造您自己的厨房秩序</view>
 
-  <view class="me-row">
-    <image wx:if="{{myAvatar}}" class="me-avatar" src="{{myAvatar}}" mode="aspectFill" />
-    <view wx:else class="me-avatar me-avatar-empty">我</view>
-    <view class="me-name">{{myName}}</view>
-    <view class="me-link" bindtap="onProfile">设置 ›</view>
-    <view class="notice-link" bindtap="onNotifications">
-      <text>通知</text>
-      <text wx:if="{{unread}}" class="badge">{{unread}}</text>
+      <view class="guest-list">
+        <view class="guest-item">
+          <view class="guest-item-title">菜谱管理</view>
+          <view class="guest-item-desc">多图、食材用量、分步骤做法、时令与标签，还能带上每份营养。</view>
+        </view>
+        <view class="guest-item">
+          <view class="guest-item-title">按餐次点菜</view>
+          <view class="guest-item-desc">早餐 / 午餐 / 晚餐 / 加餐分开点，家人各自提交，自动汇总。</view>
+        </view>
+        <view class="guest-item">
+          <view class="guest-item-title">制作与出餐</view>
+          <view class="guest-item-desc">认领任务、逐道完成、整餐出餐，出餐后自动生成采购清单。</view>
+        </view>
+        <view class="guest-item">
+          <view class="guest-item-title">统计与推荐</view>
+          <view class="guest-item-desc">热门菜、餐次分布、热量汇总，没灵感时随机抽一道。</view>
+        </view>
+      </view>
+
+      <button class="btn-primary guest-btn" bindtap="onGuestLogin">微信登录后开始使用</button>
+      <view class="guest-tip">登录仅用于同步你自己的家庭数据，不会读取手机号；未登录也可以先浏览各页面。</view>
     </view>
-  </view>
+  </block>
 
-  <view class="card member-card card-in" style="animation-delay: 40ms">
-    <view class="member" wx:for="{{members}}" wx:key="userId">
-      <image wx:if="{{item.avatar}}" class="avatar avatar-img" src="{{item.avatar}}" mode="aspectFill" />
-      <view wx:else class="avatar">{{item.initial}}</view>
-      <view class="member-name">{{item.name}}</view>
-      <view class="member-role">{{item.role}}</view>
+  <block wx:else>
+    <view class="page-title">{{householdName || '烹饪之王'}}</view>
+    <view class="muted">{{members.length}} 位成员</view>
+
+    <view class="me-row">
+      <image wx:if="{{myAvatar}}" class="me-avatar" src="{{myAvatar}}" mode="aspectFill" />
+      <view wx:else class="me-avatar me-avatar-empty">我</view>
+      <view class="me-name">{{myName}}</view>
+      <view class="me-link" bindtap="onProfile">设置 ›</view>
+      <view class="notice-link" bindtap="onNotifications">
+        <text>通知</text>
+        <text wx:if="{{unread}}" class="badge">{{unread}}</text>
+      </view>
     </view>
-    <view wx:if="{{loading}}" class="muted">加载中…</view>
-  </view>
 
-  <button class="btn-primary invite-btn" bindtap="onCreateInvite">生成邀请码</button>
-  <view wx:if="{{inviteCode}}" class="invite" bindtap="onCopyInvite">邀请码 {{inviteCode}} · 点击复制</view>
-
-  <view class="card meal-card card-in" style="animation-delay: 80ms">
-    <view class="meal-head">
-      <view class="meal-title">今日菜单</view>
+    <view class="card member-card card-in" style="animation-delay: 40ms">
+      <view class="member" wx:for="{{members}}" wx:key="userId">
+        <image wx:if="{{item.avatar}}" class="avatar avatar-img" src="{{item.avatar}}" mode="aspectFill" />
+        <view wx:else class="avatar">{{item.initial}}</view>
+        <view class="member-name">{{item.name}}</view>
+        <view class="member-role">{{item.role}}</view>
+      </view>
+      <view wx:if="{{loading}}" class="muted">加载中…</view>
     </view>
-    <view wx:for="{{meals}}" wx:key="id" class="meal-row">
-      <text>{{item.label}}</text>
-      <text class="muted">{{item.statusText}} · {{item.itemCount}} 份 · {{item.submittedCount}}/{{item.memberCount}} 已提交</text>
-    </view>
-    <view wx:if="{{!meals.length && !loading}}" class="muted">今天还没开始点菜</view>
-  </view>
 
-  <view class="card nav-card card-in" style="animation-delay: 120ms" bindtap="onOpenCalendar" hover-class="press" hover-stay-time="80">
-    <view class="nav-main">
-      <view class="nav-title">饮食日历</view>
-      <view class="muted">按月查看每天的餐次与出餐情况</view>
-    </view>
-    <text class="nav-arrow">›</text>
-  </view>
+    <button class="btn-primary invite-btn" bindtap="onCreateInvite">生成邀请码</button>
+    <view wx:if="{{inviteCode}}" class="invite" bindtap="onCopyInvite">邀请码 {{inviteCode}} · 点击复制</view>
 
-  <view wx:if="{{error}}" class="error">{{error}}</view>
+    <view class="card meal-card card-in" style="animation-delay: 80ms">
+      <view class="meal-head">
+        <view class="meal-title">今日菜单</view>
+      </view>
+      <view wx:for="{{meals}}" wx:key="id" class="meal-row">
+        <text>{{item.label}}</text>
+        <text class="muted">{{item.statusText}} · {{item.itemCount}} 份 · {{item.submittedCount}}/{{item.memberCount}} 已提交</text>
+      </view>
+      <view wx:if="{{!meals.length && !loading}}" class="muted">今天还没开始点菜</view>
+    </view>
+
+    <view class="card nav-card card-in" style="animation-delay: 120ms" bindtap="onOpenCalendar" hover-class="press" hover-stay-time="80">
+      <view class="nav-main">
+        <view class="nav-title">饮食日历</view>
+        <view class="muted">按月查看每天的餐次与出餐情况</view>
+      </view>
+      <text class="nav-arrow">›</text>
+    </view>
+
+    <view wx:if="{{error}}" class="error">{{error}}</view>
+  </block>
 </view>

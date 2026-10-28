@@ -62,6 +62,7 @@ function signature(picked: PickRow[], note: string): string {
 
 Page({
   data: {
+    loggedIn: authSession.hasToken(),
     date: toDateKey(),
     dateOptions: [
       { key: toDateKey(), label: '今天' },
@@ -99,8 +100,13 @@ Page({
   },
 
   onShow() {
-    if (!authSession.hasToken()) {
-      wx.reLaunch({ url: '/pages/auth/login/index' })
+    const loggedIn = authSession.hasToken()
+    if (loggedIn !== this.data.loggedIn) {
+      this.setData({ loggedIn })
+    }
+    // 未登录只展示介绍，不触发任何接口
+    if (!loggedIn) {
+      wx.removeStorageSync('orderNav')
       return
     }
     const nav = wx.getStorageSync('orderNav') as
@@ -123,8 +129,14 @@ Page({
   },
 
   async onPullDownRefresh() {
-    await this.bootstrap(true)
+    if (this.data.loggedIn) {
+      await this.bootstrap(true)
+    }
     wx.stopPullDownRefresh()
+  },
+
+  onGuestLogin() {
+    wx.navigateTo({ url: '/pages/auth/login/index' })
   },
 
   async bootstrap(preserveLocal = false) {

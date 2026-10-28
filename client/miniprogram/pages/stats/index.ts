@@ -27,6 +27,7 @@ interface RandomRow extends RandomDishView {
 
 Page({
   data: {
+    loggedIn: session.hasToken(),
     days: 7 as 7 | 30,
     overview: null as StatsOverviewView | null,
     topRows: [] as TopRow[],
@@ -38,8 +39,11 @@ Page({
   },
 
   onShow() {
-    if (!session.hasToken()) {
-      wx.reLaunch({ url: '/pages/auth/login/index' })
+    const loggedIn = session.hasToken()
+    if (loggedIn !== this.data.loggedIn) {
+      this.setData({ loggedIn })
+    }
+    if (!loggedIn) {
       return
     }
     if (!freshness.stale('stats')) {
@@ -49,8 +53,14 @@ Page({
   },
 
   async onPullDownRefresh() {
-    await this.load()
+    if (this.data.loggedIn) {
+      await this.load()
+    }
     wx.stopPullDownRefresh()
+  },
+
+  onGuestLogin() {
+    wx.navigateTo({ url: '/pages/auth/login/index' })
   },
 
   async load() {

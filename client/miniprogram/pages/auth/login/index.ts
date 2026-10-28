@@ -88,6 +88,16 @@ Page({
       // 拿不到模板就不弹授权，站内通知仍可用
     }
   },
+
+  /** 先不登录，回首页浏览功能 */
+  onBrowse() {
+    const pages = getCurrentPages()
+    if (pages.length > 1) {
+      wx.navigateBack()
+      return
+    }
+    wx.switchTab({ url: '/pages/home/index' })
+  },
 })
 
 function isDevtools(): boolean {

@@ -5,7 +5,8 @@
   <button class="btn-primary login-btn" bindtap="onLogin" loading="{{loading}}" disabled="{{loading}}">
     微信一键登录
   </button>
+  <view class="browse-link" bindtap="onBrowse">先随便看看，稍后登录</view>
 
   <view wx:if="{{error}}" class="error">{{error}}</view>
-  <view class="hint">登录后可创建家庭，或用邀请码加入家人的家庭</view>
+  <view class="hint">登录仅用于同步家庭数据：创建你自己的家庭，或用邀请码加入家人的家庭。不会读取手机号，昵称与头像由你自行决定是否设置。</view>
 </view>

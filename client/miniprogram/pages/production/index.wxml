@@ -1,4 +1,24 @@
 <view class="page">
+  <block wx:if="{{!loggedIn}}">
+    <view class="guest">
+      <view class="guest-brand">制作与出餐</view>
+      <view class="guest-slogan">家人确认菜单后自动生成任务：认领 → 开始制作 → 逐道完成 → 确认出餐。</view>
+      <view class="guest-list">
+        <view class="guest-item">
+          <view class="guest-item-title">谁做、做了几道</view>
+          <view class="guest-item-desc">每道菜可单独标记完成，来源里能看到每位家人点了几份。</view>
+        </view>
+        <view class="guest-item">
+          <view class="guest-item-title">出餐即结账</view>
+          <view class="guest-item-desc">确认出餐后自动记录份数，统计与采购清单随之更新。</view>
+        </view>
+      </view>
+      <button class="btn-primary guest-btn" bindtap="onGuestLogin">微信登录后查看任务</button>
+      <view class="guest-tip">登录仅用于同步家庭数据，不读取手机号。</view>
+    </view>
+  </block>
+
+  <block wx:else>
   <view class="tabs">
     <view
       class="tab {{scope === 'active' ? 'on' : ''}}"
@@ -77,4 +97,5 @@
   <view wx:elif="{{!tasks.length}}" class="placeholder">
     暂无制作任务。在「点菜」确认菜单后会自动生成任务
   </view>
+  </block>
 </view>
